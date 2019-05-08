@@ -6,10 +6,10 @@ setup(name='3dpixelgen',
       url='https://github.com/aubinrabouan/3DPixelArtGenerator',
       author='Aubin Rabouan, Paul Breugnot',
       license='GPLv3',
-      packages=['3dpixelgen'],
+      packages=['pixel3d'],
       install_requires=[
           'Pillow',
-          'stl',
+          'numpy-stl',
           'numpy'
       ],
       zip_safe=False)

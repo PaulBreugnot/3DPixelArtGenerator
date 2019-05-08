@@ -5,24 +5,17 @@ Created on Mon Feb 25 23:14:00 2019
 @author: aubin
 """
 
-from PIL import Image
 from stl import mesh
-import math
 import numpy
 
-def RGBAtoRGB(col):
-    colRGB = []
-    for i in col :
-        colRGB.append((i[0],i[1],i[2]))
-    
-    return colRGB
 
-
-
-def cube(x,z):
+def cube(x_pixel, z, pixel_size):
     """
     Creates a cube of size x*x*z at origin
     """
+
+    x = pixel_size * x_pixel
+
     # Create 3 faces of a cube
     data = numpy.zeros(12, dtype=mesh.Mesh.dtype)
     
@@ -70,18 +63,7 @@ def cube(x,z):
     data['vectors'][11] = numpy.array([[0, x, 0],
                                        [0, x, z],
                                        [x, x, z]])
-    
 
-    cube = mesh.Mesh(data.copy())
-    
-    """cube = mesh.Mesh(numpy.concatenate([
-        cube_back.data.copy(),
-        cube_front.data.copy(),
-    ]))
-"""
-    #cube.save("cube.stl")
-    return cube
+    cube_mesh = mesh.Mesh(data.copy())
 
-
-
-    
+    return cube_mesh
