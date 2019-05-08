@@ -1,3 +1,5 @@
 __pycache__
 /pixelart/*
 !/pixelart/.keep
+/models/*
+!/models/.keep

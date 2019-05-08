@@ -7,7 +7,6 @@ Created on Mon Feb 25 20:50:28 2019
 
 from PIL import Image
 from stl import mesh
-import math
 import numpy
 
 import fct
@@ -54,7 +53,7 @@ for i in range(imsize[1]):
     for j in range(imsize[0]):
         if pixval[i*imsize[0]+j][3] != 0 :
             height = 1-listcol.index(pixval[i*imsize[0]+j])/len(listcol)
-            newpixel = fct.cube(1,height) #generate the pixel at origin
+            newpixel = fct.cube(1, height) #generate the pixel at origin
             newpixel.translate([i,j, 0.0])             #translate to the position in x an y
             pixelArt = mesh.Mesh(numpy.concatenate([
                 pixelArt.data,
