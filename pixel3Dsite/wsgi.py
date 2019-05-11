@@ -1,5 +1,5 @@
 """
-WSGI config for pixartsite project.
+WSGI config for pixel3Dsite project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pixartsite.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pixel3Dsite.settings')
 
 application = get_wsgi_application()
