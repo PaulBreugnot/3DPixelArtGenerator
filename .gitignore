@@ -4,3 +4,7 @@ __pycache__
 /models/*
 !/models/.keep
 *.sqlite3
+/uploads/sprites/*
+/uploads/models3d/*
+!/uploads/sprites/.keep
+!/uploads/models3d/.keep
