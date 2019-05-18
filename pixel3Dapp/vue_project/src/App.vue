@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1 class="w3-center w3-text-theme">3D Pixel Art Generator</h1>
+    <h1 id="main_title" class="w3-center w3-text-theme">3D Pixel Art Generator</h1>
     <div class="w3-center w3-row">
       <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Sprites</h3></button>
       <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Settings</h3></button>
@@ -31,4 +31,7 @@
 </script>
 
 <style>
+#main_title {
+  font-weight: bold;
+}
 </style>

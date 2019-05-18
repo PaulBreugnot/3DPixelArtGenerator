@@ -17,7 +17,7 @@
       <label class="w3-text-theme"><b>Select File</b></label>
       <input type="file" class="w3-input w3-border-0" v-on:change="selectFile">
 
-      <button class="w3-btn w3-theme w3-margin-top">Upload!</button>
+      <button class="w3-btn w3-theme w3-margin-top" v-on:click="uploadNewSprite()">Upload!</button>
     </form>
   </div>
 </template>
@@ -39,6 +39,22 @@
         else
           this.spriteName = this.selectedFile.name
         console.log this.spriteName
+
+      uploadNewSprite: () ->
+        url = "http://localhost:8000/api/sprites/"
+        formData = new FormData()
+        formData.append("name", this.spriteName)
+        formData.append("sprite", this.selectedFile)
+
+        options =
+          method: "POST"
+          body:
+            formData
+
+        fetch(url, options)
+        .then((response) ->
+          console.log(response)
+        )
 </script>
 
 <style>

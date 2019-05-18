@@ -12,6 +12,7 @@ setup(name='3dpixelgen',
           'numpy-stl',
           'numpy',
           'django',
-          'django-static-precompiler'
+          'djangorestframework',
+          'django-cors-headers'
       ],
       zip_safe=False)
