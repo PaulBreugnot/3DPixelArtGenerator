@@ -10,6 +10,7 @@ class SpriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sprite
         fields = [
+            'id',
             'name', # Name of the sprite
             'sprite', # URL of the original file
             'model3d', # URL of the generated STL
@@ -27,3 +28,10 @@ class SpriteSerializer(serializers.ModelSerializer):
         else :
             rep['rgb_array'] = []
         return rep
+
+    # def update(self, sprite, validated_data):
+    #     sprite.name = validated_data.get('name', sprite.name)
+    #     sprite.sprite = validated_data.get('sprite', sprite.sprite)
+    #     sprite.model3d = validated_data.get('model3d', sprite.model3d)
+    #     sprite.save()
+    #     return sprite

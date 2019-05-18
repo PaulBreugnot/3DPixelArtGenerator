@@ -28,12 +28,12 @@
         options=
           headers:
             "accept": "application/json"
-            "origin": "127.0.0.1"
         component = this
         fetch(url)
         .catch((error) ->
           console.log error)
         .then((response) ->
+          console.log response
           response.json()
           )
         .then((json) ->
