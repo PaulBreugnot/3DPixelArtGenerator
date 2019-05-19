@@ -80,3 +80,24 @@ class RenameSpriteTests(TestCase):
 
             # Assert that updated name has been saved
             self.assertEqual(Sprite.objects.get(id=uploadedSpriteId).name, "renamed_test_sprite")
+
+    def test_error_404_when_file_dont_exist(self):
+        response = self.client.patch("/api/sprites/-1/", {"name": "renamed_test_sprite"}, content_type="application/json")
+
+        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class DeleteSpriteTests(TestCase):
+    def test_delete_sprite(self):
+        with UploadTestFile(self) as uploadedFile :
+            uploadedSpriteId = str(uploadedFile.response.data["id"])
+            response = self.client.delete("/api/sprites/" + uploadedSpriteId + "/")
+
+            self.assertIs(response.status_code, status.HTTP_200_OK)
+
+            self.assertIs(os.path.exists(uploadedFile.filePath), False)
+
+    def test_error_404_when_file_dont_exist(self):
+        response = self.client.delete("/api/sprites/-1/")
+
+        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
