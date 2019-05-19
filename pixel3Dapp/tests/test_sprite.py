@@ -13,22 +13,34 @@ class UploadTestFile:
     # even if an exception occured during the test.
     def __init__(self, testCase):
         self.testCase = testCase
-        self.response = None
-        self.fileName = None
-        self.filePath = None
+        self.uploadResponse = None
+        self.spriteFileName = None
+        self.spriteFilePath = None
+        self.processResponse = None
+        self.modelFileName = None
+        self.modelFilePath = None
 
     def __enter__(self):
         with open(os.path.join(os.path.dirname(__file__), "dardargnan.png"),"r+b") as sprite:
-            self.response = self.testCase.client.post("/api/sprites/", {'name' : 'test_sprite', 'sprite' : sprite })
+            self.uploadResponse = self.testCase.client.post("/api/sprites/", {'name' : 'test_sprite', 'sprite' : sprite })
 
-        self.fileName = self.response.data["sprite"].split("/")[-1]
-        self.filePath = os.path.join(settings.MEDIA_ROOT, "sprites", self.fileName)
+        self.spriteFileName = os.path.basename(self.uploadResponse.data["sprite"])
+        self.spriteFilePath = os.path.join(settings.MEDIA_ROOT, "sprites", self.spriteFileName)
 
         return self
 
     def __exit__(self, *args):
-        if os.path.exists(self.filePath):
-            os.remove(self.filePath)
+        if self.spriteFilePath and os.path.exists(self.spriteFilePath):
+            os.remove(self.spriteFilePath)
+        if self.modelFilePath and os.path.exists(self.modelFilePath):
+            os.remove(self.modelFilePath)
+
+    def process(self):
+        uploadedSpriteId = str(self.uploadResponse.data["id"])
+        self.processResponse = self.testCase.client.put("/api/sprites/" + uploadedSpriteId + "/process/")
+        self.modelFileName = os.path.basename(self.processResponse.data["model3d"])
+        self.modelFilePath = os.path.join(settings.MEDIA_ROOT, "models3d", self.modelFileName)
+
 
 class UploadSpriteTests(TestCase):
 
@@ -49,16 +61,16 @@ class UploadSpriteTests(TestCase):
     def test_upload_sprite(self):
         uploadedTestFilePath = ""
         with UploadTestFile(self) as uploadedFile :
-            self.assertIs(uploadedFile.response.status_code, status.HTTP_201_CREATED)
-            self.assertIs(os.path.exists(uploadedFile.filePath), True)
-            uploadedTestFilePath = uploadedFile.filePath
+            self.assertIs(uploadedFile.uploadResponse.status_code, status.HTTP_201_CREATED)
+            self.assertIs(os.path.exists(uploadedFile.spriteFilePath), True)
+            uploadedTestFilePath = uploadedFile.spriteFilePath
 
         self.assertIs(os.path.exists(uploadedTestFilePath), False)
 
     def test_no_error_when_file_not_found(self):
         with UploadTestFile(self) as uploadedFile :
             # Deletes uploaded file
-            os.remove(uploadedFile.filePath)
+            os.remove(uploadedFile.spriteFilePath)
 
             # No internal error should occur (otherwise, all the request crashes)
             response = self.client.get("/api/sprites/")
@@ -67,9 +79,9 @@ class UploadSpriteTests(TestCase):
 class RenameSpriteTests(TestCase):
     def test_rename_sprite(self):
         with UploadTestFile(self) as uploadedFile :
-            self.assertEqual(uploadedFile.response.data["name"], "test_sprite")
+            self.assertEqual(uploadedFile.uploadResponse.data["name"], "test_sprite")
 
-            uploadedSpriteId = str(uploadedFile.response.data["id"])
+            uploadedSpriteId = str(uploadedFile.uploadResponse.data["id"])
             response = self.client.patch("/api/sprites/" + uploadedSpriteId + "/", {"name": "renamed_test_sprite"}, content_type="application/json")
 
             # Assert that the request went OK
@@ -88,16 +100,32 @@ class RenameSpriteTests(TestCase):
 
 
 class DeleteSpriteTests(TestCase):
-    def test_delete_sprite(self):
+    
+    def test_delete_sprite_without_3d_model(self):
         with UploadTestFile(self) as uploadedFile :
-            uploadedSpriteId = str(uploadedFile.response.data["id"])
+            uploadedSpriteId = str(uploadedFile.uploadResponse.data["id"])
             response = self.client.delete("/api/sprites/" + uploadedSpriteId + "/")
 
             self.assertIs(response.status_code, status.HTTP_200_OK)
 
-            self.assertIs(os.path.exists(uploadedFile.filePath), False)
+            self.assertIs(os.path.exists(uploadedFile.spriteFilePath), False)
 
     def test_error_404_when_file_dont_exist(self):
         response = self.client.delete("/api/sprites/-1/")
 
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class ProcessTest(TestCase):
+
+    def test_process(self):
+        with UploadTestFile(self) as uploadedFile :
+
+            uploadedFile.process()
+
+            self.assertIs(uploadedFile.processResponse.status_code, status.HTTP_200_OK)
+
+            self.assertTrue(os.path.exists(uploadedFile.modelFilePath))
+
+            sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
+            self.assertIsNotNone(sprite.model3d)
+            self.assertEqual(sprite.model3d.name, os.path.join("models3d", uploadedFile.modelFileName))

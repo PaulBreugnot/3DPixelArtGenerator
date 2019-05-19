@@ -9,8 +9,8 @@ import sys
 from stl import mesh
 import numpy
 
-import model
-import generators
+import pixel3d.model as model
+import pixel3d.generators as generators
 
 
 def main(input_file, output_file, pixel_size, max_height):
