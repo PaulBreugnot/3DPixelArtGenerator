@@ -1,5 +1,5 @@
 <template>
-  <div class="w3-modal" v-bind:class="{ 'w3-hide': !display, 'w3-show': display}">
+  <div class="w3-modal" v-bind:class="[display ? 'w3-show' : 'w3-hide']">
       <div class="w3-modal-content">
         <header class="w3-container w3-center w3-theme-l1">
           <h3>Do you really want to delete this sprite?</h3>

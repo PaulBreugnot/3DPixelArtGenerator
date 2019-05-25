@@ -6,11 +6,11 @@
       v-on:click="showNewSprite = !showNewSprite">
       <i
         class="fa fa-lg w3-left w3-padding"
-        v-bind:class="{ 'fa-angle-up': !showNewSprite, 'fa-angle-down': showNewSprite}"></i>
+        v-bind:class="[showNewSprite ? 'fa-angle-down' : 'fa-angle-up']"></i>
         Upload new sprite
     </button>
 
-    <form class="w3-container w3-margin w3-animate-opacity w3-animate-zoom" v-bind:class="{ 'w3-hide': !showNewSprite }">
+    <div class="w3-container w3-margin w3-animate-opacity w3-animate-zoom" v-bind:class="{ 'w3-hide': !showNewSprite }">
       <label class="w3-text-theme"><b>Sprite Name</b></label>
       <input class="w3-input w3-border w3-light-grey" type="text" v-model="spriteName">
 
@@ -18,7 +18,7 @@
       <input type="file" class="w3-input w3-border-0" v-on:change="selectFile">
 
       <button class="w3-btn w3-theme w3-margin-top" v-on:click="uploadNewSprite()">Upload!</button>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -51,10 +51,37 @@
           body:
             formData
 
+        self = this
         fetch(url, options)
+        .catch((error) ->
+          console.log(error)
+          )
         .then((response) ->
-          console.log(response)
-        )
+          response.json()
+          )
+        .then((json) ->
+          console.log(json)
+          self.processSprite(json.id)
+          )
+
+      processSprite: (id) ->
+        url = "http://localhost:8000/api/sprites/#{id}/process/"
+        options =
+          method: "PUT"
+
+        self = this
+
+        fetch(url, options)
+        .catch((error) ->
+          console.log(error)
+          )
+        .then((response) ->
+          response.json()
+          )
+        .then((json) ->
+          console.log(json)
+          self.$emit("new-sprite", json)
+          )
 </script>
 
 <style>

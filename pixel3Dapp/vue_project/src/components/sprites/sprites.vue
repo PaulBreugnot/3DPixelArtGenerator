@@ -7,7 +7,7 @@
       v-on:hide-delete="hideDelete"
       v-on:delete-sprite="deleteSprite">
     </delete-sprite>
-    <new-sprite></new-sprite>
+    <new-sprite v-on:new-sprite="addNewSprite"></new-sprite>
     <div class="w3-row-padding">
         <div v-for="sprite in sprites" class="w3-col l4 m6 s12 w3-padding-16">
           <sprite v-bind:sprite="sprite" v-on:confirm-delete="confirmDelete"></sprite>
@@ -70,6 +70,9 @@
           index++
 
         this.hideDelete()
+
+      addNewSprite: (sprite) ->
+        this.sprites.unshift(sprite)
 
     mounted: () ->
       this.fetchSprites()
