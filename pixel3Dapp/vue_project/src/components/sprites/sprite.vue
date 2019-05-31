@@ -21,11 +21,28 @@
     </header>
 
     <div class="w3-row w3-center">
-      <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-half">2D Sprite</button>
-      <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-half">3D Model</button>
+      <button
+        class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-half"
+        v-bind:class="[currentTab == 'sprite-2d' ? 'w3-theme-d1' : '']"
+        v-on:click="currentTab = 'sprite-2d'">
+        2D Sprite
+      </button>
+      <button
+        class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-half"
+        v-bind:class="[currentTab == 'sprite-3d' ? 'w3-theme-d1' : '']"
+        v-on:click="currentTab = 'sprite-3d'">
+        3D Model
+      </button>
     </div>
-    <div class="w3-margin w3-center">
-      <sprite-2d v-bind:sprite="sprite"/>
+    <div class="spriteBodyContainer w3-padding-16 w3-center">
+      <!-- <sprite-2d v-bind:sprite="sprite"/> -->
+      <sprite-2d class="spriteBody" v-if="currentTab=='sprite-2d'" v-bind:sprite="sprite"></sprite-2d>
+      <sprite-3d class="spriteBody" v-if="(currentTab=='sprite-3d') && sprite.heightMap" v-bind:sprite="sprite"></sprite-3d>
+      <process-sprite
+        class="spriteBody"
+        v-if="(currentTab=='sprite-3d') && !sprite.heightMap"
+        v-bind:sprite="sprite"
+        v-on:sprite-process="handleSpriteProcess"></process-sprite>
     </div>
   </div>
 </template>
@@ -33,6 +50,8 @@
 <script lang="coffee">
 
   import Sprite2d from "./sprite2d"
+  import Sprite3d from "./sprite3d"
+  import ProcessSprite from "./processSprite"
 
   export default
 
@@ -47,9 +66,12 @@
 
     components:
       "sprite-2d": Sprite2d
+      "sprite-3d": Sprite3d
+      "process-sprite": ProcessSprite
 
     data: () ->
       renaming: false
+      currentTab: "sprite-3d"
 
     methods:
 
@@ -81,12 +103,23 @@
             self.renaming = false
           )
 
-
+      handleSpriteProcess: (sprite, processResponse) ->
+        console.log(processResponse)
+        sprite.heightMap = processResponse.heightMap
 
 </script>
 
 <style>
  header {
    min-height: 60px;
+ }
+
+ .spriteBody {
+   min-height: 300px;
+ }
+
+ .spriteBodyContainer {
+   width: 100%;
+   height: 100%;
  }
 </style>

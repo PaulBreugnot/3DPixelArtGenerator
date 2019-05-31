@@ -2,7 +2,7 @@
 from PIL import Image
 
 
-def compute_simple_pixel_heights(image):
+def compute_simple_pixel_heights(image, max_height):
     with Image.open(image, 'r') as im:
         pixel_values = list(im.getdata())
         image_size = im.size
@@ -15,7 +15,7 @@ def compute_simple_pixel_heights(image):
         for j in range(image_size[0]):
             pixel_value = pixel_values[i * image_size[0] + j]
             if pixel_value[3] != 0:
-                pixel_heights[i].append(1 - colors.index(pixel_value) / len(colors))
+                pixel_heights[i].append((1 - colors.index(pixel_value) / len(colors))  * max_height)
             else:
                 pixel_heights[i].append(0)
 

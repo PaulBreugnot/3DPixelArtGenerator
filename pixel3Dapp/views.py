@@ -13,7 +13,7 @@ from rest_framework.decorators import action
 from .serializers import SpriteSerializer
 from .models import Sprite
 
-import pixel3d.pixel3d as pixel3dGenerator
+import pixel3d.pixel3dgenerator as pixel3dGenerator
 
 def index(request):
     return render(request, 'pixel3d/index.html', {})
@@ -34,6 +34,7 @@ class SpriteSet(viewsets.ModelViewSet):
     serializer_class = SpriteSerializer
 
     def create(self, request):
+        # Request data should contain the sprite name and the 2D sprite file
         serializer = SpriteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -68,13 +69,26 @@ class SpriteSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     @action(methods=["put"], detail=True)
-    def process(self, request, pk=None):
+    def process(self, resquest, pk=None):
+        sprite = Sprite.objects.filter(id=pk)
+        if sprite.exists():
+            input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
+            heightMap = pixel3dGenerator.generateHeightMap(input_file_path, 30)
+            serializer = SpriteSerializer(sprite.get(), data={ 'heightMap': heightMap }, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=["put"], detail=True)
+    def export(self, request, pk=None):
         sprite = Sprite.objects.filter(id=pk)
         if sprite.exists():
 
             with TemporaryModelFile(pk) as tempModelFile:
                 input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
-                pixel3dGenerator.main(input_file_path, tempModelFile.filePath, 10, 30)
+                pixel3dGenerator.exportToStl(sprite.get().heightMap, tempModelFile.filePath, 10)
 
 
                 with open(tempModelFile.filePath, "r+b") as output_file:

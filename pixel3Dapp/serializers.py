@@ -14,6 +14,7 @@ class SpriteSerializer(serializers.ModelSerializer):
             'name', # Name of the sprite
             'sprite', # URL of the original file
             'model3d', # URL of the generated STL
+            'heightMap', # The JSON representation of pixel heights
             'rgb_array' # The RGB array representation of the original sprite
             ]
 

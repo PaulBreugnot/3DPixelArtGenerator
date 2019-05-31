@@ -7,6 +7,7 @@ from rest_framework import status
 from django.conf import settings
 
 from pixel3Dapp.models import Sprite
+import pixel3d.pixel3dgenerator as pixel3dGenerator
 
 class UploadTestFile:
     # This context manager will ensure that test files are always deleted
@@ -17,6 +18,7 @@ class UploadTestFile:
         self.spriteFileName = None
         self.spriteFilePath = None
         self.processResponse = None
+        self.exportResponse = None
         self.modelFileName = None
         self.modelFilePath = None
 
@@ -38,7 +40,11 @@ class UploadTestFile:
     def process(self):
         uploadedSpriteId = str(self.uploadResponse.data["id"])
         self.processResponse = self.testCase.client.put("/api/sprites/" + uploadedSpriteId + "/process/")
-        self.modelFileName = os.path.basename(self.processResponse.data["model3d"])
+
+    def export(self):
+        uploadedSpriteId = str(self.uploadResponse.data["id"])
+        self.exportResponse = self.testCase.client.put("/api/sprites/" + uploadedSpriteId + "/export/")
+        self.modelFileName = os.path.basename(self.exportResponse.data["model3d"])
         self.modelFilePath = os.path.join(settings.MEDIA_ROOT, "models3d", self.modelFileName)
 
 
@@ -100,7 +106,7 @@ class RenameSpriteTests(TestCase):
 
 
 class DeleteSpriteTests(TestCase):
-    
+
     def test_delete_sprite_without_3d_model(self):
         with UploadTestFile(self) as uploadedFile :
             uploadedSpriteId = str(uploadedFile.uploadResponse.data["id"])
@@ -116,13 +122,23 @@ class DeleteSpriteTests(TestCase):
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
 class ProcessTest(TestCase):
-
     def test_process(self):
         with UploadTestFile(self) as uploadedFile :
 
             uploadedFile.process()
 
             self.assertIs(uploadedFile.processResponse.status_code, status.HTTP_200_OK)
+            sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
+            self.assertEqual(pixel3dGenerator.generateHeightMap(uploadedFile.spriteFilePath, 30), sprite.heightMap)
+
+class ExportTest(TestCase):
+
+    def test_export(self):
+        with UploadTestFile(self) as uploadedFile :
+            uploadedFile.process()
+            uploadedFile.export()
+
+            self.assertIs(uploadedFile.exportResponse.status_code, status.HTTP_200_OK)
 
             self.assertTrue(os.path.exists(uploadedFile.modelFilePath))
 
