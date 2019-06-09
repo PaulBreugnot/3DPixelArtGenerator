@@ -73,7 +73,7 @@ class SpriteSet(viewsets.ModelViewSet):
         sprite = Sprite.objects.filter(id=pk)
         if sprite.exists():
             input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
-            heightMap = pixel3dGenerator.generateHeightMap(input_file_path, 30)
+            heightMap = pixel3dGenerator.generateHeightMap(input_file_path, 4)
             serializer = SpriteSerializer(sprite.get(), data={ 'heightMap': heightMap }, partial=True)
 
             if serializer.is_valid():
