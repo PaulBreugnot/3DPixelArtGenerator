@@ -12,7 +12,7 @@
 							<i class="fa fa-trash-o" aria-hidden="true"></i>
 							Delete
 					</button>
-					<button class="w3-bar-item w3-button" v-on:click="">
+					<button class="w3-bar-item w3-button" v-on:click="$emit('edit-sprite', sprite)">
 							<i class="fa fa-cubes" aria-hidden="true"></i>
 							Edit Model	
 					</button>
@@ -80,7 +80,7 @@
 
 		data: () ->
 			renaming: false
-			currentTab: "sprite-3d"
+			currentTab: "sprite-2d"
 
 		methods:
 
