@@ -1,37 +1,37 @@
 <template>
-  <div id="app">
-    <h1 id="main_title" class="w3-center w3-text-theme">3D Pixel Art Generator</h1>
-    <div class="w3-center w3-row">
-      <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Sprites</h3></button>
-      <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Settings</h3></button>
-      <button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>About</h3></button>
-    </div>
+	<div id="app">
+		<h1 id="main_title" class="w3-center w3-text-theme">3D Pixel Art Generator</h1>
+		<div class="w3-center w3-row">
+			<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Gallery</h3></button>
+			<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Editor</h3></button>
+			<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>About</h3></button>
+		</div>
 
-    <component v-bind:is="currentTab"></component>
+		<component v-bind:is="currentTab"></component>
 
-  </div>
+	</div>
 </template>
 
 <script lang="coffee">
 
-  import Sprites from "./components/sprites/sprites"
+	import Sprites from "./components/sprites/sprites"
 
-  export default
+	export default
 
-    components:
-      "sprites": Sprites
+		components:
+			"sprites": Sprites
 
-    data: () ->
-      currentTab: "sprites"
+		data: () ->
+			currentTab: "sprites"
 
-    methods:
-      selectTab: (tab) ->
-        this.currentTab = tab
+		methods:
+			selectTab: (tab) ->
+				this.currentTab = tab
 
 </script>
 
 <style>
 #main_title {
-  font-weight: bold;
+	font-weight: bold;
 }
 </style>

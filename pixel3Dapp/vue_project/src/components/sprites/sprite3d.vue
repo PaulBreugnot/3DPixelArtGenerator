@@ -1,8 +1,6 @@
 <template>
-	<div class="w3-container">
-		<canvas class="spriteCanvas" height=290 v-bind:ref="canvasName">
-		</canvas>
-	</div>
+	<canvas class="sprite-canvas" v-bind:ref="canvasName">
+	</canvas>
 </template>
 
 <script lang="coffee">
@@ -153,7 +151,7 @@
 			)
 
 			window.addEventListener('resize', () ->
-				engine.resize()
+				self.engine.resize()
 			)
 
 		destroyed: () ->
@@ -162,9 +160,8 @@
 </script>
 
 <style>
-
-.spriteCanvas {
-	width: 100%;
+.sprite-canvas {
 	height: 100%;
-}
+	width: 100%;
+	}
 </style>

@@ -4,8 +4,18 @@
 			<div v-if="displayTools" class="w3-dropdown-hover w3-cell w3-cell-middle w3-theme-d1">
 				<i class="fa fa-bars fa-2x" aria-hidden="true"></i>
 				<div class="w3-dropdown-content w3-bar-block w3-border">
-					<button class="w3-bar-item w3-button" v-on:click="renamimgMode()">Rename</button>
-					<button class="w3-bar-item w3-button w3-text-red" v-on:click="$emit('confirm-delete', sprite)">Delete</button>
+					<button class="w3-bar-item w3-button" v-on:click="renamimgMode()">
+							<i class="fa fa-pencil" aria-hidden="true"></i>
+							Rename
+					</button>
+					<button class="w3-bar-item w3-button w3-text-red" v-on:click="$emit('confirm-delete', sprite)">
+							<i class="fa fa-trash-o" aria-hidden="true"></i>
+							Delete
+					</button>
+					<button class="w3-bar-item w3-button" v-on:click="">
+							<i class="fa fa-cubes" aria-hidden="true"></i>
+							Edit Model	
+					</button>
 				</div>
 			</div>
 			<div class="w3-container w3-cell w3-cell-middle"><h4>{{ sprite.name }}</h4></div>
@@ -34,12 +44,11 @@
 				3D Model
 			</button>
 		</div>
-		<div class="spriteBodyContainer w3-padding-16 w3-center">
+		<div class="sprite-view w3-padding-16 w3-center">
 			<!-- <sprite-2d v-bind:sprite="sprite"/> -->
-			<sprite-2d class="spriteBody" v-if="currentTab=='sprite-2d'" v-bind:sprite="sprite"></sprite-2d>
-			<sprite-3d class="spriteBody" v-if="(currentTab=='sprite-3d') && sprite.heightMap" v-bind:sprite="sprite"></sprite-3d>
+			<sprite-2d v-if="currentTab=='sprite-2d'" v-bind:sprite="sprite"></sprite-2d>
+			<sprite-3d v-if="(currentTab=='sprite-3d') && sprite.heightMap" v-bind:sprite="sprite"></sprite-3d>
 			<process-sprite
-				class="spriteBody"
 				v-if="(currentTab=='sprite-3d') && !sprite.heightMap"
 				v-bind:sprite="sprite"
 				v-on:sprite-process="handleSpriteProcess"></process-sprite>
@@ -114,12 +123,8 @@
 	 min-height: 60px;
  }
 
- .spriteBody {
-	 min-height: 300px;
- }
-
- .spriteBodyContainer {
-	 width: 100%;
-	 height: 100%;
- }
+ .sprite-view {
+	height: 30vh;
+	width: 100%;
+	}
 </style>
