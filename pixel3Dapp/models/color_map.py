@@ -9,7 +9,7 @@ class ColorMapItem(models.Model):
     r = models.IntegerField()
     g = models.IntegerField()
     b = models.IntegerField()
-    h = models.IntegerField()
+    h = models.FloatField()
 
 def unserializeColorMap(colorMapArray):
     colorMap = ColorMap()

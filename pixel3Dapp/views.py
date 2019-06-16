@@ -114,6 +114,7 @@ class SpriteSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    """
     @action(methods=["get"], detail=True)
     def color_map(self, request, pk=None):
         sprite = Sprite.objects.filter(id=pk)
@@ -123,6 +124,7 @@ class SpriteSet(viewsets.ModelViewSet):
 
             return Response(colorMap, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
+    """
 
 
     @action(methods=["put"], detail=True)

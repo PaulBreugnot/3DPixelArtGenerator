@@ -31,9 +31,6 @@
 			['sprite']
 
 		data: () ->
-			height: 0
-			width: 0
-			depth: 0
 			centerNode: null
 			engine: null
 			meshes: {}
@@ -45,6 +42,7 @@
 				"canvas_#{this.sprite.id}"
 
 		methods:
+			###
 			computeSpriteSize: () ->
 				height = 0
 				width = 0
@@ -61,8 +59,19 @@
 				this.height = height
 				this.width = width
 				this.depth = depth
+			###
 
-			buildPixel: (heightItem, scene) ->
+			lookForPixelHeightInColorMap: (pixel) ->
+				# This is amazingly inefficient.
+				height = 0
+				for colorMapItem in this.sprite.colorMap.colorMapItems
+					do (colorMapItem) ->
+						if colorMapItem.r == pixel.r and colorMapItem.g == pixel.g and colorMapItem.b == pixel.b
+							height = colorMapItem.h
+							return
+				return height
+
+			buildPixel: (line, column, pixel, scene) ->
 				corners = [
 						new Vector2(0, 0),
 						new Vector2(1, 0),
@@ -70,23 +79,25 @@
 						new Vector2(0, 1)
 						]
 
+				height = this.lookForPixelHeightInColorMap(pixel)
+
 				options =
 					width: 1
 					height: 1
-					depth: heightItem.h
+					depth: height
 					updatable: true
 
-				pixel = MeshBuilder.CreateBox("pixel_#{heightItem.x}_#{heightItem.y}", options, scene)
-				pixel.position.x = heightItem.x
-				pixel.position.y = heightItem.y
-				pixel.position.z = -heightItem.h / 2
+				pixel = MeshBuilder.CreateBox("pixel_#{line}_#{column}", options, scene)
+				pixel.position.x = line
+				pixel.position.y = column
+				pixel.position.z = - height / 2
 				pixel.setParent(this.centerNode)
 
 				return pixel
 
 
 			buildCamera: (scene) ->
-				radius = Math.max(this.width, this.height) + this.depth / 2 + 10
+				radius = Math.max(this.sprite.pixelMap.width, this.sprite.pixelMap.height) + 10
 				camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2, radius, this.centerNode.position, scene)
 				return camera
 
@@ -129,24 +140,31 @@
 			this.engine = new Engine(canvas, true, {stencil: true})
 			scene = createScene(this.engine, canvas)
 	
-			this.computeSpriteSize()
+#			this.computeSpriteSize()
 
 			this.centerNode = new TransformNode("center", scene)
-			this.centerNode.setAbsolutePosition(new Vector3(this.width / 2, this.height / 2, this.depth / 2))
+			this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.width / 2, this.sprite.pixelMap.height / 2, 0))
 
 			self = this
 
-			buildAndColorPixel = (heightItem) ->
-					mesh = self.buildPixel(heightItem, scene)
-					pixelTexture = new StandardMaterial("pixel_#{heightItem.x}_#{heightItem.y}", scene)
-					color = self.sprite.rgb_array[heightItem.x][heightItem.y]
-					pixelTexture.diffuseColor = new Color3(color[0] / 255, color[1] / 255, color[2] / 255)
+			buildAndColorPixel = (line, column, pixel) ->
+					mesh = self.buildPixel(line, column, pixel, scene)
+					pixelTexture = new StandardMaterial("pixel_#{line}_#{column}", scene)
+					# color = self.sprite.rgb_array[heightItem.x][heightItem.y]
+					pixelTexture.diffuseColor = new Color3(pixel.r / 255, pixel.g / 255, pixel.b / 255)
 					mesh.material = pixelTexture
-					if !self.meshes[heightItem.x]
-						self.meshes[heightItem.x] = {}
-					self.meshes[heightItem.x][heightItem.y] = mesh
+					if !self.meshes[line]
+						self.meshes[line] = {}
+					self.meshes[line][column] = mesh
 			
-			buildAndColorPixel(heightItem) for heightItem in JSON.parse(this.sprite.heightMap)
+#			buildAndColorPixel(heightItem) for heightItem in JSON.parse(this.sprite.heightMap)
+
+			console.log(this.sprite.colorMap)
+			for line, row of this.sprite.pixelMap.rows
+				do (line, row) ->
+					for column, pixel of row 
+						do (column, pixel) ->
+							buildAndColorPixel(line, column, pixel)
 
 			camera = this.buildCamera(scene)
 

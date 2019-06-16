@@ -11,7 +11,7 @@
 		</thead>
 		<tbody>
 		<color-item
-			v-for="color in colorMap"
+			v-for="color in colorMap.colorMapItems"
 			v-bind:ref="colorRef(color)"
 			v-bind:class="[selectedColor == colorRef(color) ? 'w3-theme' : '']"
 			v-bind:color="color"

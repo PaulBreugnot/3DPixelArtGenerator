@@ -16,7 +16,7 @@
 
 				<h3 class="w3-bar-item w3-center w3-border-top w3-border-theme">ColorMap</h3>
 				<color-map
-						v-bind:color-map="spriteData.colorMap"
+						v-bind:color-map="sprite.colorMap"
 						v-on:select-color="selectMeshes($event)"
 						/>
 			</div>
@@ -42,27 +42,11 @@ export default
 	data: () ->
 		pixelWidth: 5
 		maxHeight: 10
-		spriteData: {}
 
 	props:
 		["sprite"]
 	
 	methods:
-		fetchColorMap: () ->
-			url = process.env.VUE_APP_SERVER_ROOT + "/api/sprites/" + this.sprite.id + "/color_map/"
-
-			self = this
-			fetch(url)
-			.catch((error) ->
-				console.log(error)
-			)
-			.then((response) ->
-				response.json()
-			)
-			.then((json) ->
-				self.spriteData = JSON.parse(json)
-				console.log(self.spriteData)
-			)
 
 		selectMeshes: (color) ->
 			console.log(color)
@@ -70,18 +54,15 @@ export default
 			meshes = this.$refs.sprite3d.getMeshes()
 
 			self = this
-			console.log(self.spriteData.pixels)
-			for line_index, line of self.spriteData.pixels
-				do (line_index, line) ->
-					for column_index, pixel of line
-						do (column_index, pixel) ->
+			console.log(self.sprite.pixelMap)
+			for line, row of self.sprite.pixelMap.rows
+				do (line, row) ->
+					for column, pixel of row
+						do (column, pixel) ->
 							if pixel.r == color.r and pixel.g == color.g and pixel.b == color.b
-								selectedMeshes.push(meshes[line_index][column_index])
+								selectedMeshes.push(meshes[line][column])
 
 			this.$refs.sprite3d.highlightMeshes(selectedMeshes)
-
-	mounted: () ->
-		this.fetchColorMap()
 	
 </script>
 
