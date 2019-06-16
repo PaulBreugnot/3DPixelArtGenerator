@@ -1,11 +1,17 @@
 import os
-from .models import Sprite
+from pixel3Dapp.models import Sprite
 from rest_framework import serializers
 
 import pixel3d.utils.image
 from django.conf import settings
 
+from .color_map_serializer import ColorMapSerializer
+from .pixel_map_serializer import PixelMapSerializer
+
 class SpriteSerializer(serializers.ModelSerializer):
+
+    colorMap = ColorMapSerializer(required=False)
+    pixelMap = PixelMapSerializer(required=False)
 
     class Meta:
         model = Sprite
@@ -14,10 +20,14 @@ class SpriteSerializer(serializers.ModelSerializer):
             'name', # Name of the sprite
             'sprite', # URL of the original file
             'model3d', # URL of the generated STL
-            'heightMap', # The JSON representation of pixel heights
-            'rgb_array' # The RGB array representation of the original sprite
+            'colorMap',
+            'pixelMap'
             ]
+#            'heightMap', # The JSON representation of pixel heights
+#            'rgb_array' # The RGB array representation of the original sprite
+ 
 
+    """
     def to_representation(self, instance):
         '''
         Overrides the parser to_representation function to compute the rgb_array
@@ -29,6 +39,7 @@ class SpriteSerializer(serializers.ModelSerializer):
         else :
             rep['rgb_array'] = []
         return rep
+    """
 
     # def update(self, sprite, validated_data):
     #     sprite.name = validated_data.get('name', sprite.name)

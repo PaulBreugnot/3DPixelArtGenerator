@@ -1,24 +1,6 @@
 import json
 from PIL import Image
-
-"""
-Color class with hash and equals methods
-"""
-class Color:
-
-    def __init__(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
-
-    def __eq__(self, other): 
-        if not isinstance(other, Color):
-            return NotImplemented
-
-        return self.r == other.r and self.g == other.g and self.b == other.b
-
-    def __hash__(self):
-        return hash((self.r, self.g, self.b,))
+from .pixel_map_exporter import Color, generatePixelMap
 
 """
 Simple wrapper for a {color : height} dictionnary, used by the custom PixelMapEncoder.
@@ -66,24 +48,22 @@ class FullMapEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def generate_color_map(image, pixel_heights):
-    pixelMap = {}
+def generateColorMap(image, pixel_heights):
+
+    pixelMap = generatePixelMap(image)
     colorHeights = {}
+
     with Image.open(image, 'r') as im:
         pixel_values = list(im.getdata())
         image_size = im.size
 
     for i in range(image_size[1]):
-        pixels = {}
         for j in range(image_size[0]):
             pixel_value = pixel_values[i * image_size[0] + j]
             color = Color(pixel_value[0], pixel_value[1], pixel_value[2])
             if pixel_value[3] != 0:
-                pixels[j] = color
                 if color not in colorHeights:
                     colorHeights[color] = pixel_heights[i][j]
-
-        pixelMap[i] = pixels
 
     fullMap = FullMap(pixelMap, ColorMap(colorHeights))
     print(fullMap)

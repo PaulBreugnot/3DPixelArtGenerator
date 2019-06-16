@@ -2,22 +2,7 @@
 Module used to encore an image into a pixel map.
 """
 
-class PixelArray:
-
-    def __init__(self, pixelRows):
-        self.pixelRows = pixelRows
-
-class PixelRow:
-
-    def __init__(self, x, pixels):
-        self.x = x
-        self.pixels = pixels
-
-class Pixel:
-
-    def __init__(self, y, color):
-        self.y = y
-        self.color = color
+from PIL import Image
 
 class Color:
 
@@ -35,4 +20,28 @@ class Color:
     def __hash__(self):
         return hash((self.r, self.g, self.b,))
 
+class PixelMap:
 
+    def __init__(self, width, height, pixels):
+        self.width = width
+        self.height = height
+        self.pixels = pixels
+
+def generatePixelMap(image):
+    pixels = {}
+
+    with Image.open(image, 'r') as im:
+        pixel_values = list(im.getdata())
+        image_size = im.size
+
+    for i in range(image_size[1]):
+        row = {}
+        for j in range(image_size[0]):
+            pixel_value = pixel_values[i * image_size[0] + j]
+            color = Color(pixel_value[0], pixel_value[1], pixel_value[2])
+            if pixel_value[3] != 0:
+                row[j] = color
+
+        pixels[i] = row
+
+    return PixelMap(image_size[0], image_size[1], pixels)

@@ -1,10 +1,10 @@
 <template>
-	<svg v-if="sprite && sprite.rgb_array.length" class="sprite-svg" v-bind:view-box.camel="viewBoxSize">
-		<g v-for="(line, line_index) in sprite.rgb_array">
-			<g v-for="(pixel, pixel_index) in line">
+	<svg class="sprite-svg" v-bind:view-box.camel="viewBoxSize">
+		<g v-for="(row, y) in sprite.pixelMap.rows">
+			<g v-for="(pixel, x) in row">
 				<rect
-					v-bind:x="pixel_index * 10"
-					v-bind:y="line_index * 10"
+					v-bind:x="x * 10"
+					v-bind:y="y * 10"
 					width="10" height="10"
 					v-bind:style="{fill: computeColor(pixel)}" />
 			</g>
@@ -20,8 +20,8 @@
 
 		computed:
 			viewBoxSize: () ->
-				spriteHeight = this.sprite.rgb_array.length * 10
-				spriteWidth = this.sprite.rgb_array[0].length * 10
+				spriteHeight = this.sprite.pixelMap.height * 10
+				spriteWidth = this.sprite.pixelMap.width * 10
 				viewBoxSize = Math.max(spriteHeight, spriteWidth)
 
 				leftOffset = (spriteWidth - viewBoxSize) / 2
@@ -30,10 +30,10 @@
 
 		methods:
 			computeColor: (pixel)->
-				if pixel[3] != 0
-					"rgb(#{pixel[0]},#{pixel[1]},#{pixel[2]})"
-				else
-					"rgba(0, 0, 0, 0)"
+				"rgb(#{pixel.r},#{pixel.g},#{pixel.b})"
+
+		mounted: () ->
+			console.log(this.sprite)
 
 </script>
 

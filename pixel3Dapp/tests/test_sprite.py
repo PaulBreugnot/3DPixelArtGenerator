@@ -5,9 +5,15 @@ from django.test import TestCase
 from django.core.files.images import ImageFile
 from rest_framework import status
 from django.conf import settings
+from rest_framework.renderers import JSONRenderer
 
 from pixel3Dapp.models import Sprite
+from pixel3Dapp.serializers import ColorMapSerializer
+from pixel3Dapp.serializers import PixelMapSerializer
+
 import pixel3d.pixel3dgenerator as pixel3dGenerator
+from pixel3Dapp.models.color_map import unserializeColorMap 
+from pixel3Dapp.models.pixel_map import unserializePixelMap 
 
 class UploadTestFile:
     # This context manager will ensure that test files are always deleted
@@ -69,6 +75,19 @@ class UploadSpriteTests(TestCase):
         with UploadTestFile(self) as uploadedFile :
             self.assertIs(uploadedFile.uploadResponse.status_code, status.HTTP_201_CREATED)
             self.assertIs(os.path.exists(uploadedFile.spriteFilePath), True)
+
+            sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
+
+            self.assertIsNotNone(sprite.pixelMap)
+
+            checkPixelMap = unserializePixelMap(pixel3dGenerator.generatePixelMap(uploadedFile.spriteFilePath))
+            checkPixelMapSerializer = PixelMapSerializer(checkPixelMap)
+
+            spritePixelMapSerializer = PixelMapSerializer(sprite.pixelMap)
+
+            self.assertEqual(JSONRenderer().render(spritePixelMapSerializer.data), JSONRenderer().render(checkPixelMapSerializer.data))
+
+
             uploadedTestFilePath = uploadedFile.spriteFilePath
 
         self.assertIs(os.path.exists(uploadedTestFilePath), False)
@@ -125,12 +144,23 @@ class ProcessTest(TestCase):
     def test_process(self):
         with UploadTestFile(self) as uploadedFile :
 
+            self.assertIs(uploadedFile.uploadResponse.status_code, status.HTTP_201_CREATED)
+
             uploadedFile.process()
 
             self.assertIs(uploadedFile.processResponse.status_code, status.HTTP_200_OK)
             sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
-            self.assertEqual(pixel3dGenerator.generateHeightMap(uploadedFile.spriteFilePath, 10), sprite.heightMap)
 
+            self.assertIsNotNone(sprite.colorMap)
+
+            checkColorMap = unserializeColorMap(pixel3dGenerator.generateColorMap(uploadedFile.spriteFilePath, 10))
+            checkColorMapSerializer = ColorMapSerializer(checkColorMap)
+
+            spriteColorMapSerializer = ColorMapSerializer(sprite.colorMap)
+
+            self.assertEqual(JSONRenderer().render(spriteColorMapSerializer.data), JSONRenderer().render(checkColorMapSerializer.data))
+
+"""
 class ExportTest(TestCase):
 
     def test_export(self):
@@ -145,3 +175,4 @@ class ExportTest(TestCase):
             sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
             self.assertIsNotNone(sprite.model3d)
             self.assertEqual(sprite.model3d.name, os.path.join("models3d", uploadedFile.modelFileName))
+"""

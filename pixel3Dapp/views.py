@@ -9,9 +9,14 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer
 
 from .serializers import SpriteSerializer
+from .serializers import ColorMapSerializer
+
 from .models import Sprite
+from .models.color_map import unserializeColorMap 
+from .models.pixel_map import unserializePixelMap
 
 import pixel3d.pixel3dgenerator as pixel3dGenerator
 
@@ -37,7 +42,23 @@ class SpriteSet(viewsets.ModelViewSet):
         # Request data should contain the sprite name and the 2D sprite file
         serializer = SpriteSerializer(data=request.data)
         if serializer.is_valid():
+            # Save user provided data
             serializer.save()
+
+            # Gets the new sprite
+            newSprite = Sprite.objects.get(pk = serializer.data["id"])
+
+            # Generates its pixel map
+            input_file_path = os.path.join(settings.MEDIA_ROOT, newSprite.sprite.name)
+            pixelMap = pixel3dGenerator.generatePixelMap(input_file_path)
+            newSprite.pixelMap = unserializePixelMap(pixelMap)
+
+            # saves the new sprite
+            newSprite.save()
+
+            # returns the new sprite
+            serializer = SpriteSerializer(newSprite)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -72,13 +93,25 @@ class SpriteSet(viewsets.ModelViewSet):
     def process(self, request, pk=None):
         sprite = Sprite.objects.filter(id=pk)
         if sprite.exists():
-            input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
-            heightMap = pixel3dGenerator.generateHeightMap(input_file_path, 10)
-            serializer = SpriteSerializer(sprite.get(), data={ 'heightMap': heightMap }, partial=True)
+            sprite = sprite.get()
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+            input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.sprite.name)
+
+            # Generate the color map, as an array
+            colorMap = pixel3dGenerator.generateColorMap(input_file_path, 10)
+
+            # Convert the array to a colorMap object
+            colorMap = unserializeColorMap(colorMap)
+            
+            # Sets the colorMap field, and save the sprite
+            sprite.colorMap = colorMap
+            sprite.save()
+
+            # Send back the serialized created sprite
+            serializer = SpriteSerializer(sprite)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     @action(methods=["get"], detail=True)

@@ -21,6 +21,19 @@ def compute_simple_pixel_heights(image, max_height):
 
     return pixel_heights
 
+def compute_ordered_color_map(image, max_height):
+    with Image.open(image, 'r') as im:
+        pixel_values = list(im.getdata())
+        image_size = im.size
+
+    colors = _compute_image_colors(pixel_values)
+
+    colorMap = []
+    for color in colors:
+        colorMap.append({"r": color[0], "g": color[1], "b": color[2], "h": (1 - colors.index(color) / len(colors))  * max_height})
+
+    return colorMap
+
 
 def _compute_image_colors(pixel_values):
     #  Determining the colors in the sprite
