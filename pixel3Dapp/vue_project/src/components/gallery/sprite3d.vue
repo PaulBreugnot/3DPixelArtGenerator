@@ -4,7 +4,7 @@
 </template>
 
 <script lang="coffee">
-	import { Engine, Scene, ArcRotateCamera, Animation, Vector2, Vector3, Quaternion, TransformNode, HemisphericLight, PolygonMeshBuilder, MeshBuilder, SceneLoader, StandardMaterial, Color3 } from 'babylonjs';
+	import { Engine, Scene, ArcRotateCamera, Animation, Vector2, Vector3, Quaternion, TransformNode, HemisphericLight, PolygonMeshBuilder, MeshBuilder, SceneLoader, StandardMaterial, Color3, HighlightLayer } from 'babylonjs'
 	import 'babylonjs-loaders'
 
 	createScene = (engine, canvas) ->
@@ -36,6 +36,9 @@
 			depth: 0
 			centerNode: null
 			engine: null
+			meshes: {}
+			highlightLayer: null
+			highlightedMeshes: []
 
 		computed:
 			canvasName: () ->
@@ -71,6 +74,7 @@
 					width: 1
 					height: 1
 					depth: heightItem.h
+					updatable: true
 
 				pixel = MeshBuilder.CreateBox("pixel_#{heightItem.x}_#{heightItem.y}", options, scene)
 				pixel.position.x = heightItem.x
@@ -108,14 +112,22 @@
 				this.centerNode.animations = []
 				this.centerNode.animations.push(rotateAnimation)
 
+			getMeshes: () ->
+				this.meshes
+
+			highlightMeshes: (meshesToHighlight) ->
+				this.highlightLayer.removeMesh(mesh) for mesh in this.highlightedMeshes	
+				self = this
+				for mesh in meshesToHighlight
+					do (mesh) ->
+						self.highlightedMeshes.push(mesh)
+						self.highlightLayer.addMesh(mesh, Color3.Blue())
 
 		mounted: () ->
-			console.log(this.canvasName)
-			console.log(this.$refs)
 			canvas = this.$refs[this.canvasName]
 		
-			this.engine = new Engine(canvas, true)
-			scene = createScene(this.engine, canvas);
+			this.engine = new Engine(canvas, true, {stencil: true})
+			scene = createScene(this.engine, canvas)
 	
 			this.computeSpriteSize()
 
@@ -130,6 +142,9 @@
 					color = self.sprite.rgb_array[heightItem.x][heightItem.y]
 					pixelTexture.diffuseColor = new Color3(color[0] / 255, color[1] / 255, color[2] / 255)
 					mesh.material = pixelTexture
+					if !self.meshes[heightItem.x]
+						self.meshes[heightItem.x] = {}
+					self.meshes[heightItem.x][heightItem.y] = mesh
 			
 			buildAndColorPixel(heightItem) for heightItem in JSON.parse(this.sprite.heightMap)
 
@@ -145,6 +160,10 @@
 			this.animate()
 
 			# scene.beginAnimation(this.centerNode, 0, 150, true)
+
+			this.highlightLayer = new HighlightLayer("hl", scene)
+			this.highlightLayer.blurHorizontalSize = 0.1	
+			this.highlightLayer.blurVerticalSize = 0.5
 
 			this.engine.runRenderLoop(() ->
 					scene.render()

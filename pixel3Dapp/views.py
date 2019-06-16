@@ -69,17 +69,28 @@ class SpriteSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     @action(methods=["put"], detail=True)
-    def process(self, resquest, pk=None):
+    def process(self, request, pk=None):
         sprite = Sprite.objects.filter(id=pk)
         if sprite.exists():
             input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
-            heightMap = pixel3dGenerator.generateHeightMap(input_file_path, 4)
+            heightMap = pixel3dGenerator.generateHeightMap(input_file_path, 10)
             serializer = SpriteSerializer(sprite.get(), data={ 'heightMap': heightMap }, partial=True)
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=["get"], detail=True)
+    def color_map(self, request, pk=None):
+        sprite = Sprite.objects.filter(id=pk)
+        if sprite.exists():
+            input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
+            colorMap = pixel3dGenerator.generateColorMap(input_file_path, 10)
+
+            return Response(colorMap, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
 
     @action(methods=["put"], detail=True)
     def export(self, request, pk=None):

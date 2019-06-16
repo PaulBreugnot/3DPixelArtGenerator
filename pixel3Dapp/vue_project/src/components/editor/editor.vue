@@ -3,7 +3,7 @@
 		<toolbar id="editor-toolbar"></toolbar>
 		<div id="editor-body" class="w3-cell-row">
 			<div id="sprite-view" class="w3-cell">
-				<sprite-3d v-bind:sprite="sprite"></sprite-3d>
+				<sprite-3d ref="sprite3d" v-bind:sprite="sprite"></sprite-3d>
 			</div>
 			<div class="w3-cell w3-cell-top w3-bar-block" style="width:20%">
 				<h3 id="size-title" class="w3-bar-item w3-center w3-border-top w3-border-theme">Size</h3>
@@ -15,6 +15,10 @@
 				</form>
 
 				<h3 class="w3-bar-item w3-center w3-border-top w3-border-theme">ColorMap</h3>
+				<color-map
+						v-bind:color-map="spriteData.colorMap"
+						v-on:select-color="selectMeshes($event)"
+						/>
 			</div>
 		</div>
 	</div>
@@ -25,6 +29,7 @@ import Toolbar from "./toolbar"
 import Sprite3D from "../gallery/sprite3d"
 import Methods from "./methods"
 import Profiles from "./profiles"
+import ColorMap from "./colorMap/colorMap"
 
 export default
 	components:
@@ -32,14 +37,51 @@ export default
 		"sprite-3d":Sprite3D
 		"methods": Methods
 		"profiles": Profiles
+		"color-map": ColorMap
 
 	data: () ->
 		pixelWidth: 5
 		maxHeight: 10
+		spriteData: {}
 
 	props:
 		["sprite"]
+	
+	methods:
+		fetchColorMap: () ->
+			url = process.env.VUE_APP_SERVER_ROOT + "/api/sprites/" + this.sprite.id + "/color_map/"
 
+			self = this
+			fetch(url)
+			.catch((error) ->
+				console.log(error)
+			)
+			.then((response) ->
+				response.json()
+			)
+			.then((json) ->
+				self.spriteData = JSON.parse(json)
+				console.log(self.spriteData)
+			)
+
+		selectMeshes: (color) ->
+			console.log(color)
+			selectedMeshes = []
+			meshes = this.$refs.sprite3d.getMeshes()
+
+			self = this
+			console.log(self.spriteData.pixels)
+			for line_index, line of self.spriteData.pixels
+				do (line_index, line) ->
+					for column_index, pixel of line
+						do (column_index, pixel) ->
+							if pixel.r == color.r and pixel.g == color.g and pixel.b == color.b
+								selectedMeshes.push(meshes[line_index][column_index])
+
+			this.$refs.sprite3d.highlightMeshes(selectedMeshes)
+
+	mounted: () ->
+		this.fetchColorMap()
 	
 </script>
 

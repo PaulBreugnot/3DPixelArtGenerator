@@ -129,7 +129,7 @@ class ProcessTest(TestCase):
 
             self.assertIs(uploadedFile.processResponse.status_code, status.HTTP_200_OK)
             sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
-            self.assertEqual(pixel3dGenerator.generateHeightMap(uploadedFile.spriteFilePath, 30), sprite.heightMap)
+            self.assertEqual(pixel3dGenerator.generateHeightMap(uploadedFile.spriteFilePath, 10), sprite.heightMap)
 
 class ExportTest(TestCase):
 
