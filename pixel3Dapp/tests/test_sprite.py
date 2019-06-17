@@ -6,14 +6,16 @@ from django.core.files.images import ImageFile
 from rest_framework import status
 from django.conf import settings
 from rest_framework.renderers import JSONRenderer
+from django.db import models
 
 from pixel3Dapp.models import Sprite
 from pixel3Dapp.serializers import ColorMapSerializer
 from pixel3Dapp.serializers import PixelMapSerializer
 
 import pixel3d.pixel3dgenerator as pixel3dGenerator
-from pixel3Dapp.models.color_map import unserializeColorMap 
-from pixel3Dapp.models.pixel_map import unserializePixelMap 
+
+from pixel3Dapp.models.color_map import ColorMap, ColorMapItem, unserializeColorMap 
+from pixel3Dapp.models.pixel_map import PixelMap, PixelRow, Pixel, Color, unserializePixelMap 
 
 class UploadTestFile:
     # This context manager will ensure that test files are always deleted
@@ -73,16 +75,21 @@ class UploadSpriteTests(TestCase):
     def test_upload_sprite(self):
         uploadedTestFilePath = ""
         with UploadTestFile(self) as uploadedFile :
+            # Assert that the query succeeded
             self.assertIs(uploadedFile.uploadResponse.status_code, status.HTTP_201_CREATED)
+
+            # Assert that the file has been uploaded
             self.assertIs(os.path.exists(uploadedFile.spriteFilePath), True)
 
+            # Retrieves the created object
             sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
 
+            # Asserts that the pixel map has been created
             self.assertIsNotNone(sprite.pixelMap)
 
-            checkPixelMap = unserializePixelMap(pixel3dGenerator.generatePixelMap(uploadedFile.spriteFilePath))
+            # Asserts that the pixel map is consistent
+            checkPixelMap = unserializePixelMap(pixel3dGenerator.generatePixelMap(uploadedFile.spriteFilePath), None)
             checkPixelMapSerializer = PixelMapSerializer(checkPixelMap)
-
             spritePixelMapSerializer = PixelMapSerializer(sprite.pixelMap)
 
             self.assertEqual(JSONRenderer().render(spritePixelMapSerializer.data), JSONRenderer().render(checkPixelMapSerializer.data))
@@ -126,6 +133,70 @@ class RenameSpriteTests(TestCase):
 
 class DeleteSpriteTests(TestCase):
 
+    def test_delete_sprite(self):
+        with UploadTestFile(self) as uploadedFile:
+
+            # Process the file so that is has a colorMap
+            uploadedFile.process()
+
+            sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
+
+            # Sprite ID before delete
+            uploadedSpriteId = str(uploadedFile.uploadResponse.data["id"])
+
+            # ColorMap info befor delete
+            self.assertIsNotNone(sprite.colorMap)
+            colorMapId = sprite.colorMap.id
+            colorMapItemIds = [colorMapItem.id for colorMapItem in sprite.colorMap.colorMapItems.all()]
+
+            # PixelMap info before delete
+            self.assertIsNotNone(sprite.pixelMap)
+            pixelMapId = sprite.pixelMap.id
+
+            pixelRows = [pixelRow for pixelRow in sprite.pixelMap.rows.all()]
+            pixelRowIds = [pixelRow.id for pixelRow in pixelRows]
+
+            pixels = []
+            for pixelRow in pixelRows:
+                for pixel in pixelRow.pixels.all():
+                    pixels.append(pixel)
+
+            pixelIds = [pixel.id for pixel in pixels]
+            colorIds = [pixel.color.id for pixel in pixels]
+
+            # Delete sprite (and all linked objects)
+            deleteResponse = self.client.delete("/api/sprites/" + uploadedSpriteId + "/")
+            self.assertIs(deleteResponse.status_code, status.HTTP_200_OK)
+
+            # Check Sprite deleted
+            with self.assertRaises(Sprite.DoesNotExist) :
+                Sprite.objects.get(id = uploadedSpriteId)
+
+            # Check ColorMap delete
+            with self.assertRaises(ColorMap.DoesNotExist) :
+                ColorMap.objects.get(id = colorMapId)
+
+            for colorMapItemId in colorMapItemIds:
+                with self.assertRaises(ColorMapItem.DoesNotExist):
+                    ColorMapItem.objects.get(id = colorMapItemId)
+
+            # Check PixelMap delete
+            with self.assertRaises(PixelMap.DoesNotExist):
+                PixelMap.objects.get(id = pixelMapId)
+
+            for pixelRowId in pixelRowIds:
+                with self.assertRaises(PixelRow.DoesNotExist):
+                    PixelRow.objects.get(id = pixelRowId)
+
+            for pixelId in pixelIds:
+                with self.assertRaises(Pixel.DoesNotExist):
+                    Pixel.objects.get(id = pixelId)
+
+            for colorId in colorIds:
+                with self.assertRaises(Color.DoesNotExist):
+                    Color.objects.get(id = colorId)
+
+
     def test_delete_sprite_without_3d_model(self):
         with UploadTestFile(self) as uploadedFile :
             uploadedSpriteId = str(uploadedFile.uploadResponse.data["id"])
@@ -140,6 +211,7 @@ class DeleteSpriteTests(TestCase):
 
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
 class ProcessTest(TestCase):
     def test_process(self):
         with UploadTestFile(self) as uploadedFile :
@@ -153,7 +225,11 @@ class ProcessTest(TestCase):
 
             self.assertIsNotNone(sprite.colorMap)
 
-            checkColorMap = unserializeColorMap(pixel3dGenerator.generateColorMap(uploadedFile.spriteFilePath, 10))
+            # Check default pixel size and max heights
+            self.assertEqual(sprite.colorMap.pixelSize, 10)
+            self.assertEqual(sprite.colorMap.maxHeight, 10)
+
+            checkColorMap = unserializeColorMap(pixel3dGenerator.generateColorMap(uploadedFile.spriteFilePath, 10), None)
             checkColorMapSerializer = ColorMapSerializer(checkColorMap)
 
             spriteColorMapSerializer = ColorMapSerializer(sprite.colorMap)

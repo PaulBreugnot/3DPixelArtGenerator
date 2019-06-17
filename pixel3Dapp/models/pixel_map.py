@@ -1,12 +1,9 @@
 from django.db import models
+from .sprite import Sprite
 
-
-class Color(models.Model):
-    r = models.IntegerField()
-    g = models.IntegerField()
-    b = models.IntegerField()
 
 class PixelMap(models.Model):
+    sprite = models.OneToOneField(Sprite, on_delete=models.CASCADE, related_name="pixelMap", default=None, null=True)
     width = models.IntegerField()
     height = models.IntegerField()
 
@@ -17,10 +14,16 @@ class PixelRow(models.Model):
 class Pixel(models.Model):
     pixelRow = models.ForeignKey(PixelRow, on_delete=models.CASCADE, related_name="pixels")
     x = models.IntegerField()
-    color = models.OneToOneField(Color, on_delete=models.SET_NULL, null=True)
 
-def unserializePixelMap(pixelMapObject):
-    pixelMap = PixelMap(width = pixelMapObject.width, height = pixelMapObject.height)
+class Color(models.Model):
+    pixel = models.OneToOneField(Pixel, on_delete=models.CASCADE, default=None, null=True)
+    r = models.IntegerField()
+    g = models.IntegerField()
+    b = models.IntegerField()
+
+
+def unserializePixelMap(pixelMapObject, sprite):
+    pixelMap = PixelMap(sprite = sprite, width = pixelMapObject.width, height = pixelMapObject.height)
     pixelMap.save()
 
     for row_index in pixelMapObject.pixels.keys():
@@ -29,10 +32,10 @@ def unserializePixelMap(pixelMapObject):
         for column_index in pixelMapObject.pixels[row_index].keys():
             colorItem = pixelMapObject.pixels[row_index][column_index]
 
-            color = Color(r = colorItem.r, g = colorItem.g, b = colorItem.b)
-            color.save()
-
-            pixel = Pixel(pixelRow = pixelRow, x = column_index, color = color)
+            pixel = Pixel(pixelRow = pixelRow, x = column_index)
             pixel.save()
+
+            color = Color(pixel = pixel, r = colorItem.r, g = colorItem.g, b = colorItem.b)
+            color.save()
 
     return pixelMap

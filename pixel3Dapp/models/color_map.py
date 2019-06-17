@@ -1,8 +1,11 @@
 from django.db import models
 
+from .sprite import Sprite
 
 class ColorMap(models.Model):
-    pass
+    sprite = models.OneToOneField(Sprite, on_delete=models.CASCADE, related_name="colorMap", default=None, null=True)
+    pixelSize = models.FloatField(default = 10)
+    maxHeight = models.FloatField(default = 10)
 
 class ColorMapItem(models.Model):
     colorMap = models.ForeignKey(ColorMap, on_delete=models.CASCADE, related_name="colorMapItems")
@@ -11,8 +14,8 @@ class ColorMapItem(models.Model):
     b = models.IntegerField()
     h = models.FloatField()
 
-def unserializeColorMap(colorMapArray):
-    colorMap = ColorMap()
+def unserializeColorMap(colorMapArray, sprite):
+    colorMap = ColorMap(sprite = sprite)
     colorMap.save()
 
     for color in colorMapArray:

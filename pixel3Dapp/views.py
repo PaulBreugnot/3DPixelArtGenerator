@@ -51,7 +51,7 @@ class SpriteSet(viewsets.ModelViewSet):
             # Generates its pixel map
             input_file_path = os.path.join(settings.MEDIA_ROOT, newSprite.sprite.name)
             pixelMap = pixel3dGenerator.generatePixelMap(input_file_path)
-            newSprite.pixelMap = unserializePixelMap(pixelMap)
+            unserializePixelMap(pixelMap, newSprite)
 
             # saves the new sprite
             newSprite.save()
@@ -101,10 +101,10 @@ class SpriteSet(viewsets.ModelViewSet):
             colorMap = pixel3dGenerator.generateColorMap(input_file_path, 10)
 
             # Convert the array to a colorMap object
-            colorMap = unserializeColorMap(colorMap)
+            unserializeColorMap(colorMap, sprite)
             
             # Sets the colorMap field, and save the sprite
-            sprite.colorMap = colorMap
+            # sprite.colorMap = colorMap
             sprite.save()
 
             # Send back the serialized created sprite
