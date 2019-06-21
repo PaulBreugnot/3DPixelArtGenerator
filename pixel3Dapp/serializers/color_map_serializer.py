@@ -14,4 +14,4 @@ class ColorMapSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ColorMap
-        fields = ("colorMapItems", )
+        fields = ("colorMapItems", "pixelSize", "maxHeight" )

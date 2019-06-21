@@ -15,6 +15,7 @@
 			v-bind:ref="colorRef(color)"
 			v-bind:class="[selectedColor == colorRef(color) ? 'w3-theme' : '']"
 			v-bind:color="color"
+			v-on:update-color="updateColor($event)"
 			v-on:click="selectColor(color)"/>
 		</tbody>
 	</table>
@@ -41,5 +42,8 @@ export default
 		selectColor: (color) ->
 			this.$emit('select-color', color)
 			this.selectedColor = this.colorRef(color)
+
+		updateColor: (color) ->
+			this.$emit('update-color', color)
 	
 </script>

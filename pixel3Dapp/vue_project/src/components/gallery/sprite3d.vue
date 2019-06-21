@@ -82,14 +82,15 @@
 				height = this.lookForPixelHeightInColorMap(pixel)
 
 				options =
-					width: 1
-					height: 1
-					depth: height
+					width: this.sprite.colorMap.pixelSize
+					height: this.sprite.colorMap.pixelSize
+					depth: 1
 					updatable: true
 
 				pixel = MeshBuilder.CreateBox("pixel_#{line}_#{column}", options, scene)
-				pixel.position.x = line
-				pixel.position.y = column
+				pixel.scaling.z = height
+				pixel.position.x = line * this.sprite.colorMap.pixelSize
+				pixel.position.y = column * this.sprite.colorMap.pixelSize
 				pixel.position.z = - height / 2
 				pixel.setParent(this.centerNode)
 
@@ -97,7 +98,7 @@
 
 
 			buildCamera: (scene) ->
-				radius = Math.max(this.sprite.pixelMap.width, this.sprite.pixelMap.height) + 10
+				radius = Math.max(this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize, this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize + 10)
 				camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2, radius, this.centerNode.position, scene)
 				return camera
 
@@ -134,65 +135,75 @@
 						self.highlightedMeshes.push(mesh)
 						self.highlightLayer.addMesh(mesh, Color3.Blue())
 
+			updateMeshes: (meshesToUpdate, newHeight) ->
+				console.log newHeight
+				for mesh in meshesToUpdate
+					do (mesh) ->
+						mesh.scaling.z = newHeight
+			build: () ->
+				canvas = this.$refs[this.canvasName]
+
+				this.engine = new Engine(canvas, true, {stencil: true})
+				scene = createScene(this.engine, canvas)
+
+	#			this.computeSpriteSize()
+
+				this.centerNode = new TransformNode("center", scene)
+				this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize / 2, this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize / 2, 0))
+
+				self = this
+
+				buildAndColorPixel = (line, column, pixel) ->
+						mesh = self.buildPixel(line, column, pixel, scene)
+						pixelTexture = new StandardMaterial("pixel_#{line}_#{column}", scene)
+						# color = self.sprite.rgb_array[heightItem.x][heightItem.y]
+						pixelTexture.diffuseColor = new Color3(pixel.r / 255, pixel.g / 255, pixel.b / 255)
+						mesh.material = pixelTexture
+						if !self.meshes[line]
+							self.meshes[line] = {}
+						self.meshes[line][column] = mesh
+
+	#			buildAndColorPixel(heightItem) for heightItem in JSON.parse(this.sprite.heightMap)
+
+				for line, row of this.sprite.pixelMap.rows
+					do (line, row) ->
+						for column, pixel of row 
+							do (column, pixel) ->
+								buildAndColorPixel(line, column, pixel)
+
+				camera = this.buildCamera(scene)
+
+				this.centerNode.rotation.z = -Math.PI / 2
+
+				# Attach the camera to the canvas.
+				camera.attachControl(canvas, false)
+
+				this.buildLight(scene)
+
+				this.animate()
+
+				# scene.beginAnimation(this.centerNode, 0, 150, true)
+
+				this.highlightLayer = new HighlightLayer("hl", scene)
+				this.highlightLayer.blurHorizontalSize = 0.1	
+				this.highlightLayer.blurVerticalSize = 0.5
+
+				this.engine.runRenderLoop(() ->
+						scene.render()
+				)
+
+				window.addEventListener('resize', () ->
+					self.engine.resize()
+				)
+
+			clear: () ->
+				this.engine.stopRenderLoop()
+
 		mounted: () ->
-			canvas = this.$refs[this.canvasName]
-		
-			this.engine = new Engine(canvas, true, {stencil: true})
-			scene = createScene(this.engine, canvas)
-	
-#			this.computeSpriteSize()
-
-			this.centerNode = new TransformNode("center", scene)
-			this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.width / 2, this.sprite.pixelMap.height / 2, 0))
-
-			self = this
-
-			buildAndColorPixel = (line, column, pixel) ->
-					mesh = self.buildPixel(line, column, pixel, scene)
-					pixelTexture = new StandardMaterial("pixel_#{line}_#{column}", scene)
-					# color = self.sprite.rgb_array[heightItem.x][heightItem.y]
-					pixelTexture.diffuseColor = new Color3(pixel.r / 255, pixel.g / 255, pixel.b / 255)
-					mesh.material = pixelTexture
-					if !self.meshes[line]
-						self.meshes[line] = {}
-					self.meshes[line][column] = mesh
-			
-#			buildAndColorPixel(heightItem) for heightItem in JSON.parse(this.sprite.heightMap)
-
-			console.log(this.sprite.colorMap)
-			for line, row of this.sprite.pixelMap.rows
-				do (line, row) ->
-					for column, pixel of row 
-						do (column, pixel) ->
-							buildAndColorPixel(line, column, pixel)
-
-			camera = this.buildCamera(scene)
-
-			this.centerNode.rotation.z = -Math.PI / 2
-
-			# Attach the camera to the canvas.
-			camera.attachControl(canvas, false)
-
-			this.buildLight(scene)
-
-			this.animate()
-
-			# scene.beginAnimation(this.centerNode, 0, 150, true)
-
-			this.highlightLayer = new HighlightLayer("hl", scene)
-			this.highlightLayer.blurHorizontalSize = 0.1	
-			this.highlightLayer.blurVerticalSize = 0.5
-
-			this.engine.runRenderLoop(() ->
-					scene.render()
-			)
-
-			window.addEventListener('resize', () ->
-				self.engine.resize()
-			)
+			this.build()
 
 		destroyed: () ->
-			this.engine.stopRenderLoop()
+			this.clear()
 
 </script>
 

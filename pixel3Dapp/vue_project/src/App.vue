@@ -3,8 +3,18 @@
 		<header id="main-header">
 			<h1 id="main_title" class="w3-center w3-text-theme">3D Pixel Art Generator</h1>
 			<div class="w3-center w3-row">
-				<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Gallery</h3></button>
-				<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>Editor</h3></button>
+				<button
+					class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"
+					v-bind:class="[currentTab == 'sprites' ? 'w3-theme' : '']"
+					v-on:click="currentTab = 'sprites'">
+						<h3>Gallery</h3>
+				</button>
+				<button
+					class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"
+					v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
+					v-on:click="currentTab = 'editor'">
+						<h3>Editor</h3>
+				</button>
 				<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>About</h3></button>
 			</div>
 		</header>
@@ -13,7 +23,11 @@
 			v-if="currentTab == 'sprites'"
 			v-on:edit-sprite="editSprite($event)">
 		</sprites>
-		<editor id="editor" v-if="currentTab == 'editor'" v-bind:sprite="currentSprite"></editor>
+		<editor
+			id="editor"
+			v-if="currentTab == 'editor'"
+			v-bind:sprite="currentSprite">
+		</editor>
 
 	</div>
 </template>

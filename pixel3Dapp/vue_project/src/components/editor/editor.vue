@@ -8,16 +8,17 @@
 			<div class="w3-cell w3-cell-top w3-bar-block" style="width:20%">
 				<h3 id="size-title" class="w3-bar-item w3-center w3-border-top w3-border-theme">Size</h3>
 				<form class="w3-container">
-					<label class="w3-text-theme"><b>Pixel Width</b></label>
-					<input class="w3-input w3-border" v-model="pixelWidth" type="number">
+					<label class="w3-text-theme"><b>Pixel Size</b></label>
+					<input class="w3-input w3-border" v-model="sprite.colorMap.pixelSize" v-on:input="handlePixelSizeUpdate" type="number">
 					<label class="w3-text-theme"><b>Max Height</b></label>
-					<input class="w3-input w3-border" v-model="maxHeight" type="number">
+					<input class="w3-input w3-border" v-bind:value="sprite.colorMap.maxHeight" type="number">
 				</form>
 
 				<h3 class="w3-bar-item w3-center w3-border-top w3-border-theme">ColorMap</h3>
 				<color-map
 						v-bind:color-map="sprite.colorMap"
 						v-on:select-color="selectMeshes($event)"
+						v-on:update-color="updateMeshes($event)"
 						/>
 			</div>
 		</div>
@@ -39,17 +40,12 @@ export default
 		"profiles": Profiles
 		"color-map": ColorMap
 
-	data: () ->
-		pixelWidth: 5
-		maxHeight: 10
-
 	props:
 		["sprite"]
 	
 	methods:
 
-		selectMeshes: (color) ->
-			console.log(color)
+		findMeshes: (color) ->
 			selectedMeshes = []
 			meshes = this.$refs.sprite3d.getMeshes()
 
@@ -61,8 +57,18 @@ export default
 						do (column, pixel) ->
 							if pixel.r == color.r and pixel.g == color.g and pixel.b == color.b
 								selectedMeshes.push(meshes[line][column])
+			return selectedMeshes
 
-			this.$refs.sprite3d.highlightMeshes(selectedMeshes)
+		selectMeshes: (color) ->
+			this.$refs.sprite3d.highlightMeshes(this.findMeshes(color))
+
+		updateMeshes: (color) ->
+			this.$refs.sprite3d.updateMeshes(this.findMeshes(color), color.h)
+
+		handlePixelSizeUpdate: (newSize) ->
+			this.$refs.sprite3d.clear()
+			this.$refs.sprite3d.build()
+
 	
 </script>
 
