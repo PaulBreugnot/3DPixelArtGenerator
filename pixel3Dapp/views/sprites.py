@@ -11,17 +11,15 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 
-from .serializers import SpriteSerializer
-from .serializers import ColorMapSerializer
+from pixel3Dapp.serializers import SpriteSerializer
+from pixel3Dapp.serializers import ColorMapSerializer
 
-from .models import Sprite
-from .models.color_map import unserializeColorMap 
-from .models.pixel_map import unserializePixelMap
+from pixel3Dapp.models import Sprite, ColorMap
+from pixel3Dapp.models.color_map import unserializeColorMap 
+from pixel3Dapp.models.pixel_map import unserializePixelMap
 
 import pixel3d.pixel3dgenerator as pixel3dGenerator
 
-def index(request):
-    return render(request, 'pixel3d/index.html', {})
 
 class TemporaryModelFile:
     def __init__(self, sprite_id):
@@ -99,6 +97,9 @@ class SpriteSet(viewsets.ModelViewSet):
 
             # Generate the color map, as an array
             colorMap = pixel3dGenerator.generateColorMap(input_file_path, 10)
+
+            if ColorMap.objects.filter(sprite_id = sprite.id).exists():
+                sprite.colorMap.delete()
 
             # Convert the array to a colorMap object
             unserializeColorMap(colorMap, sprite)

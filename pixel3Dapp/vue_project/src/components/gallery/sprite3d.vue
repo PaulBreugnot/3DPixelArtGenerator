@@ -4,7 +4,7 @@
 </template>
 
 <script lang="coffee">
-	import { Engine, Scene, ArcRotateCamera, Animation, Vector2, Vector3, Quaternion, TransformNode, HemisphericLight, PolygonMeshBuilder, MeshBuilder, SceneLoader, StandardMaterial, Color3, HighlightLayer } from 'babylonjs'
+	import { Engine, Scene, ArcRotateCamera, Mesh, Animation, Vector2, Vector3, Quaternion, TransformNode, HemisphericLight, PolygonMeshBuilder, MeshBuilder, SceneLoader, StandardMaterial, Color3, HighlightLayer } from 'babylonjs'
 	import 'babylonjs-loaders'
 
 	createScene = (engine, canvas) ->
@@ -100,6 +100,14 @@
 			buildCamera: (scene) ->
 				radius = Math.max(this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize, this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize + 10)
 				camera = new ArcRotateCamera('camera', -Math.PI / 2, Math.PI / 2, radius, this.centerNode.position, scene)
+
+				allMeshes = []
+				for meshLine in Object.values(this.meshes)
+					do (meshLine) ->
+						allMeshes.push(mesh) for mesh in Object.values(meshLine)
+
+				camera.zoomOn(allMeshes)
+
 				return camera
 
 			buildLight: (scene) ->
@@ -136,10 +144,11 @@
 						self.highlightLayer.addMesh(mesh, Color3.Blue())
 
 			updateMeshes: (meshesToUpdate, newHeight) ->
-				console.log newHeight
 				for mesh in meshesToUpdate
 					do (mesh) ->
 						mesh.scaling.z = newHeight
+						mesh.position.z = -newHeight / 2
+
 			build: () ->
 				canvas = this.$refs[this.canvasName]
 
@@ -149,7 +158,7 @@
 	#			this.computeSpriteSize()
 
 				this.centerNode = new TransformNode("center", scene)
-				this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize / 2, this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize / 2, 0))
+				this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize / 2, this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize / 2, 0))
 
 				self = this
 

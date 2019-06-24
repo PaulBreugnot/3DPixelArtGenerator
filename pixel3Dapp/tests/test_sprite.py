@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework.renderers import JSONRenderer
 from django.db import models
 
-from pixel3Dapp.models import Sprite
+from pixel3Dapp.models import Sprite, ColorMap
 from pixel3Dapp.serializers import ColorMapSerializer
 from pixel3Dapp.serializers import PixelMapSerializer
 
@@ -212,7 +212,22 @@ class DeleteSpriteTests(TestCase):
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
+def _serializedColorMapWithoutId(serializerData):
+    return {
+        "colorMapItems": [
+            {
+                "r": colorMapItem["r"],
+                "g": colorMapItem["g"],
+                "b": colorMapItem["b"],
+                "h": colorMapItem["h"]
+            } for colorMapItem in serializerData["colorMapItems"]
+            ],
+        "pixelSize": serializerData["pixelSize"],
+        "maxHeight": serializerData["maxHeight"]
+        }
+
 class ProcessTest(TestCase):
+
     def test_process(self):
         with UploadTestFile(self) as uploadedFile :
 
@@ -234,7 +249,39 @@ class ProcessTest(TestCase):
 
             spriteColorMapSerializer = ColorMapSerializer(sprite.colorMap)
 
-            self.assertEqual(JSONRenderer().render(spriteColorMapSerializer.data), JSONRenderer().render(checkColorMapSerializer.data))
+            self.assertEqual(
+                    JSONRenderer().render(_serializedColorMapWithoutId(spriteColorMapSerializer.data)),
+                    JSONRenderer().render(_serializedColorMapWithoutId(checkColorMapSerializer.data))
+                )
+
+    def test_reprocess_sprite(self):
+        with UploadTestFile(self) as uploadedFile :
+            uploadedFile.process()
+
+            originalColorMap = Sprite.objects.get(id = uploadedFile.uploadResponse.data["id"]).colorMap
+            originalColorMapItems = originalColorMap.colorMapItems.all()
+
+            for colorMapItem in originalColorMapItems:
+                colorMapItem.h = 0
+                colorMapItem.save()
+
+            editedColorMap = Sprite.objects.get(id = uploadedFile.uploadResponse.data["id"]).colorMap
+
+            for colorMapItem in editedColorMap.colorMapItems.all():
+                self.assertEqual(colorMapItem.h, 0)
+
+            reprocessResponse = self.client.put("/api/sprites/" + str(uploadedFile.uploadResponse.data["id"]) + "/process/")
+
+            self.assertIs(reprocessResponse.status_code, status.HTTP_200_OK)
+
+            self.assertIs(ColorMap.objects.filter(id = originalColorMap.id).exists(), False)
+
+            reloadedColorMap = Sprite.objects.get(id = uploadedFile.uploadResponse.data["id"]).colorMap
+
+            for colorMapItem in originalColorMap.colorMapItems.all():
+                self.assertEqual(ColorMapItem.objects.get(id = colorMapItem.id), colorMapItem.h)
+
+
 
 """
 class ExportTest(TestCase):

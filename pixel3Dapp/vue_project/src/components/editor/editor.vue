@@ -1,6 +1,10 @@
 <template>
 	<div>
-		<toolbar id="editor-toolbar"></toolbar>
+		<toolbar
+			v-bind:sprite="sprite"
+			v-on:reprocess="refresh3Ddisplay"
+			id="editor-toolbar">
+		</toolbar>
 		<div id="editor-body" class="w3-cell-row">
 			<div id="sprite-view" class="w3-cell">
 				<sprite-3d ref="sprite3d" v-bind:sprite="sprite"></sprite-3d>
@@ -9,13 +13,14 @@
 				<h3 id="size-title" class="w3-bar-item w3-center w3-border-top w3-border-theme">Size</h3>
 				<form class="w3-container">
 					<label class="w3-text-theme"><b>Pixel Size</b></label>
-					<input class="w3-input w3-border" v-model="sprite.colorMap.pixelSize" v-on:input="handlePixelSizeUpdate" type="number">
+					<input class="w3-input w3-border" v-model="sprite.colorMap.pixelSize" v-on:input="refresh3Ddisplay" type="number">
 					<label class="w3-text-theme"><b>Max Height</b></label>
 					<input class="w3-input w3-border" v-bind:value="sprite.colorMap.maxHeight" type="number">
 				</form>
 
 				<h3 class="w3-bar-item w3-center w3-border-top w3-border-theme">ColorMap</h3>
 				<color-map
+						class="color-map"
 						v-bind:color-map="sprite.colorMap"
 						v-on:select-color="selectMeshes($event)"
 						v-on:update-color="updateMeshes($event)"
@@ -50,7 +55,6 @@ export default
 			meshes = this.$refs.sprite3d.getMeshes()
 
 			self = this
-			console.log(self.sprite.pixelMap)
 			for line, row of self.sprite.pixelMap.rows
 				do (line, row) ->
 					for column, pixel of row
@@ -65,11 +69,10 @@ export default
 		updateMeshes: (color) ->
 			this.$refs.sprite3d.updateMeshes(this.findMeshes(color), color.h)
 
-		handlePixelSizeUpdate: (newSize) ->
+		refresh3Ddisplay: () ->
 			this.$refs.sprite3d.clear()
 			this.$refs.sprite3d.build()
 
-	
 </script>
 
 <style>
@@ -89,4 +92,9 @@ export default
 #size-title {
 	margin-top: 0px;
 }
+
+.color-map {
+	height: 70%;
+}
+
 </style>

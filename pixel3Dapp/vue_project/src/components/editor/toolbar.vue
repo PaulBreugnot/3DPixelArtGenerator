@@ -21,7 +21,10 @@
 		</button>
 
 		<methods class="w3-bar-item w3-border-left w3-border-theme toolbar-button"></methods>
-		<button class="w3-button w3-bar-item w3-border-right w3-border-theme toolbar-button w3-large">
+		<button
+			class="w3-button w3-bar-item w3-border-right w3-border-theme toolbar-button w3-large"
+			v-on:click="processSprite"
+			>
 			<i class="fa fa-refresh fa-lg" aria-hidden="true"></i>
 			Re-build	
 		</button>
@@ -35,6 +38,32 @@ import Methods from "./methods"
 export default
 	components:
 		"methods": Methods
+	
+	props:
+		sprite:
+			type: Object
+			required: true
+
+	methods:
+		processSprite: () ->
+			url = process.env.VUE_APP_SERVER_ROOT + "/api/sprites/" + this.sprite.id + "/process/"
+
+			options =
+				method: "PUT"
+
+			self = this
+			fetch(url, options)
+			.catch((error) ->
+				console.log(error)
+				)
+			.then((response) ->
+				response.json()
+				)
+			.then((json) ->
+				self.sprite.colorMap = json.colorMap
+				console.log self.sprite
+				self.$emit("reprocess")
+			)
 
 </script>
 
