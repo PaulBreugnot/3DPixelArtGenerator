@@ -41,8 +41,8 @@ def generateColorMap(input_file, max_height):
 
     return simple_generator.compute_ordered_color_map(input_file, max_height);
 
-def exportToStl(height_map, output_file, pixel_size):
-    pixel_art_model = stl_exporter.generate_stl(json.loads(height_map), pixel_size)
+def exportToStl(pixel_map, color_map, pixel_size, output_file):
+    pixel_art_model = stl_exporter.generate_stl(pixel_map, color_map, pixel_size)
 
     pixel_art_model.save(output_file)
 

@@ -11,8 +11,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 
-from pixel3Dapp.serializers import SpriteSerializer
-from pixel3Dapp.serializers import ColorMapSerializer
+from pixel3Dapp.serializers import SpriteSerializer, ColorMapSerializer, PixelMapSerializer
 
 from pixel3Dapp.models import Sprite, ColorMap
 from pixel3Dapp.models.color_map import unserializeColorMap 
@@ -115,18 +114,6 @@ class SpriteSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    """
-    @action(methods=["get"], detail=True)
-    def color_map(self, request, pk=None):
-        sprite = Sprite.objects.filter(id=pk)
-        if sprite.exists():
-            input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
-            colorMap = pixel3dGenerator.generateColorMap(input_file_path, 10)
-
-            return Response(colorMap, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    """
-
 
     @action(methods=["put"], detail=True)
     def export(self, request, pk=None):
@@ -135,8 +122,19 @@ class SpriteSet(viewsets.ModelViewSet):
 
             with TemporaryModelFile(pk) as tempModelFile:
                 input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.get().sprite.name)
-                pixel3dGenerator.exportToStl(sprite.get().heightMap, tempModelFile.filePath, 10)
 
+                colorMapSerializer = ColorMapSerializer(sprite.get().colorMap)
+                pixelMapSerializer = PixelMapSerializer(sprite.get().pixelMap)
+
+#                print(colorMapSerializer.data)
+#                print(pixelMapSerializer.data)
+
+                pixel3dGenerator.exportToStl(
+                        pixelMapSerializer.data["rows"],
+                        colorMapSerializer.data["colorMapItems"],
+                        colorMapSerializer.data["pixelSize"],
+                        tempModelFile.filePath
+                        )
 
                 with open(tempModelFile.filePath, "r+b") as output_file:
                     serializer = SpriteSerializer(sprite.get(), data={ 'model3d': File(output_file) }, partial=True)

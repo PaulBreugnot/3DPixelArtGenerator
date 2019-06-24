@@ -15,7 +15,10 @@
 			Save Profile
 		</button>
 
-		<button class="w3-button w3-bar-item toolbar-button w3-large">
+		<button
+			class="w3-button w3-bar-item toolbar-button w3-large"
+			v-on:click="exportSprite"
+			>
 			<i class="fa fa-rocket fa-lg" aria-hidden="true"></i>
 			Download STL	
 		</button>
@@ -63,6 +66,27 @@ export default
 				self.sprite.colorMap = json.colorMap
 				console.log self.sprite
 				self.$emit("reprocess")
+			)
+	
+		exportSprite: () ->
+			url = process.env.VUE_APP_SERVER_ROOT + "/api/sprites/" + this.sprite.id + "/export/"
+
+			options =
+				method: "PUT"
+
+			self = this
+			fetch(url, options)
+			.catch((error) ->
+				console.log(error)
+				)
+			.then((response) ->
+				response.json()
+				)
+			.then((json) ->
+				console.log json
+				link = document.createElement("a")
+				link.href = "#{process.env.VUE_APP_SERVER_ROOT}#{json.model3d}"
+				link.click()
 			)
 
 </script>

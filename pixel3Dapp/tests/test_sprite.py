@@ -17,6 +17,8 @@ import pixel3d.pixel3dgenerator as pixel3dGenerator
 from pixel3Dapp.models.color_map import ColorMap, ColorMapItem, unserializeColorMap 
 from pixel3Dapp.models.pixel_map import PixelMap, PixelRow, Pixel, Color, unserializePixelMap 
 
+from pixel3Dapp.serializers import ColorMapSerializer, PixelMapSerializer
+
 class UploadTestFile:
     # This context manager will ensure that test files are always deleted
     # even if an exception occured during the test.
@@ -283,7 +285,6 @@ class ProcessTest(TestCase):
 
 
 
-"""
 class ExportTest(TestCase):
 
     def test_export(self):
@@ -298,4 +299,4 @@ class ExportTest(TestCase):
             sprite = Sprite.objects.get(id=uploadedFile.uploadResponse.data["id"])
             self.assertIsNotNone(sprite.model3d)
             self.assertEqual(sprite.model3d.name, os.path.join("models3d", uploadedFile.modelFileName))
-"""
+

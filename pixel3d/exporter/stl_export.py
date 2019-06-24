@@ -9,7 +9,7 @@ from stl import mesh
 import numpy
 
 
-def generate_stl(height_map, pixel_size):
+def generate_stl(pixel_map, color_map, pixel_size):
     """
     Generate the 3D model according to the specified pixel heights.
     :param pixel_heights: array of pixel height. Might be the same size as the original picture.
@@ -20,13 +20,23 @@ def generate_stl(height_map, pixel_size):
     data = numpy.zeros(0, dtype=mesh.Mesh.dtype)
     pixel_art_model = mesh.Mesh(data, remove_empty_areas=False)
 
-    for pixel in height_map:
-        new_pixel = cube(1, pixel["h"], pixel_size)  # generate the pixel at origin
-        new_pixel.translate([pixel["x"] * pixel_size, pixel["y"] * pixel_size, 0.0])    # translate to the position in x an y
-        pixel_art_model = mesh.Mesh(numpy.concatenate([
-            pixel_art_model.data,
-            new_pixel.data,
-        ]))
+    for row_index, row in pixel_map.items():
+        for pixel_index, pixel in row.items():
+            pixel_height = 0
+            height_found = False
+            i = 0
+            while i < len(color_map) and not height_found:
+                if (color_map[i]["r"], color_map[i]["g"], color_map[i]["b"]) == (pixel["r"], pixel["g"], pixel["b"]):
+                    height_found = True
+                    pixel_height = color_map[i]["h"]
+                i+=1
+
+            new_pixel = cube(1, pixel_height, pixel_size)  # generate the pixel at origin
+            new_pixel.translate([row_index * pixel_size, pixel_index * pixel_size, 0.0])    # translate to the position in x an y
+            pixel_art_model = mesh.Mesh(numpy.concatenate([
+                pixel_art_model.data,
+                new_pixel.data,
+            ]))
 
     return pixel_art_model
 
