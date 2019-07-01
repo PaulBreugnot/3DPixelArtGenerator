@@ -1,6 +1,9 @@
 <template>
 	<div class="w3-bar w3-theme-l4">
-		<button class="w3-button w3-bar-item toolbar-button w3-large">
+		<button
+			class="w3-button w3-bar-item toolbar-button w3-large"
+			v-bind:disabled="!currentlyUpdating"
+			v-on:click="save">
 			<i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i>
 			Save
 		</button>
@@ -42,12 +45,46 @@ export default
 	components:
 		"methods": Methods
 	
+	computed:
+		currentlyUpdating: () ->
+			Object.keys(this.updates.colorMapItems).length or this.updates.maxHeight or this.updates.pixelSize
+	
 	props:
 		sprite:
 			type: Object
 			required: true
 
+		updates:
+			type: Object
+			required: true
+
 	methods:
+		save: () ->
+			console.log(this.updatedColorItems)
+
+			url = "#{process.env.VUE_APP_SERVER_ROOT}/api/color_maps/#{this.sprite.colorMap.id}/"
+
+			options =
+				method: "PATCH"
+				body:
+					JSON.stringify(this.updates)
+				headers:
+					"Content-Type": "application/json"
+
+			console.log options.body
+
+			self = this
+			fetch(url, options)
+			.catch((error) ->
+				console.log error
+			)
+			.then((response) ->
+				console.log response
+				self.updates.colorMapItems = []
+				self.$delete(self.updates, "maxHeight")
+				self.$delete(self.updates, "pixelSize")
+			)
+
 		processSprite: () ->
 			url = process.env.VUE_APP_SERVER_ROOT + "/api/sprites/" + this.sprite.id + "/process/"
 
