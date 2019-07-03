@@ -28,7 +28,12 @@
 	export default
 
 		props:
-			['sprite']
+			sprite:
+				type: Object
+				required: true
+			animate:
+				type: Boolean
+				default: false
 
 		data: () ->
 			centerNode: null
@@ -38,6 +43,22 @@
 			meshes: {}
 			highlightLayer: null
 			highlightedMeshes: []
+
+		watch:
+			sprite: (newSprite, oldSprite) ->
+				# Wait for next tick, so that the canvas is initialized
+				this.$nextTick(() ->
+					# Rebuild everything
+					this.clear()
+					this.initBuild()
+					this.build()
+
+					self = this
+					this.engine.runRenderLoop(() ->
+						self.scene.render()
+						)
+					)
+
 
 		computed:
 			canvasName: () ->
@@ -123,8 +144,8 @@
 			buildLight: () ->
 				new HemisphericLight('light1', new Vector3(1, 0, 0), this.scene)
 
-			animate: () ->
-				rotateAnimation = new BABYLON.Animation("myAnimation", "rotation.x", 30, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE)
+			animateSprite: () ->
+				rotateAnimation = new BABYLON.Animation("myAnimation", "rotation.y", 30, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE)
 
 				keys = []
 
@@ -141,6 +162,8 @@
 				rotateAnimation.setKeys(keys)
 				this.centerNode.animations = []
 				this.centerNode.animations.push(rotateAnimation)
+
+				this.scene.beginAnimation(this.centerNode, 0, 150, true)
 
 			getMeshes: () ->
 				this.meshes
@@ -195,6 +218,9 @@
 								buildAndColorPixel(line, column, pixel)
 				this.refreshCamera()
 
+				if this.animate
+					this.animateSprite()
+
 
 			initBuild: () ->
 				canvas = this.$refs[this.canvasName]
@@ -202,11 +228,8 @@
 				this.engine = new Engine(canvas, true, {stencil: true})
 				this.scene = createScene(this.engine, canvas)
 
-	#			this.computeSpriteSize()
-
-
 				this.centerNode = new TransformNode("center", this.scene)
-				this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize / 2, this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize / 2, 0))
+				this.centerNode.setAbsolutePosition(new Vector3(this.sprite.pixelMap.width * this.sprite.colorMap.pixelSize / 2, this.sprite.pixelMap.height * this.sprite.colorMap.pixelSize / 2, 0))
 
 				this.centerNode.rotation.z = -Math.PI / 2
 
@@ -217,8 +240,6 @@
 
 				this.buildLight()
 
-				this.animate()
-
 				# scene.beginAnimation(this.centerNode, 0, 150, true)
 
 				this.highlightLayer = new HighlightLayer("hl", this.scene)
@@ -226,13 +247,15 @@
 				this.highlightLayer.blurVerticalSize = 0.5
 
 				self = this
+				###
 				this.engine.runRenderLoop(() ->
 						self.scene.render()
 				)
-
+				###
 				window.addEventListener('resize', () ->
 					self.engine.resize()
 				)
+
 
 			clear: () ->
 				this.engine.stopRenderLoop()

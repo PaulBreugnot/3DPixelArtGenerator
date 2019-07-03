@@ -48,7 +48,7 @@
 			<!-- <sprite-2d v-bind:sprite="sprite"/> -->
 			<keep-alive>
 				<sprite-2d v-if="currentTab=='sprite-2d'" v-bind:sprite="sprite"></sprite-2d>
-				<sprite-3d v-if="(currentTab=='sprite-3d') && sprite.colorMap" v-bind:sprite="sprite"></sprite-3d>
+				<sprite-3d v-if="(currentTab=='sprite-3d') && sprite.colorMap" v-bind:sprite="sprite" animate></sprite-3d>
 			</keep-alive>
 			<process-sprite
 				v-if="(currentTab=='sprite-3d') && !sprite.colorMap"
