@@ -16,7 +16,7 @@
 					<label class="w3-text-theme"><b>Pixel Size</b></label>
 					<input class="w3-input w3-border" v-model="sprite.colorMap.pixelSize" v-on:input="handlePixelSizeInput($event.target.value)" type="number">
 					<label class="w3-text-theme"><b>Max Height</b></label>
-					<input class="w3-input w3-border" v-bind:value="sprite.colorMap.maxHeight" v-on:input="handleMaxHeightInput($event.target.value)" type="number">
+					<input class="w3-input w3-border" v-model="sprite.colorMap.maxHeight" v-on:input="handleMaxHeightInput($event.target.value)" type="number">
 				</form>
 				<table class="w3-table">
 					<tr>
@@ -116,6 +116,7 @@ export default
 		refresh3Ddisplay: () ->
 			this.$refs.sprite3d.clear()
 			this.$refs.sprite3d.build()
+			this.$refs.sprite3d.run()
 
 </script>
 

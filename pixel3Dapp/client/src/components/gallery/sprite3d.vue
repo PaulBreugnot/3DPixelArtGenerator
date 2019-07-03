@@ -52,11 +52,7 @@
 					this.clear()
 					this.initBuild()
 					this.build()
-
-					self = this
-					this.engine.runRenderLoop(() ->
-						self.scene.render()
-						)
+					this.run()
 					)
 
 
@@ -260,6 +256,12 @@
 			clear: () ->
 				this.engine.stopRenderLoop()
 
+			run: () ->
+				self = this
+				this.engine.runRenderLoop(() ->
+					self.scene.render()
+					)
+
 		mounted: () ->
 			this.initBuild()
 			this.build()
@@ -271,10 +273,7 @@
 			this.clear()
 
 		activated: () ->
-			self = this
-			this.engine.runRenderLoop(() ->
-					self.scene.render()
-			)
+			this.run()
 
 </script>
 
