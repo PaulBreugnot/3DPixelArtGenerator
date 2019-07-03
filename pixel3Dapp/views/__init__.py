@@ -1,5 +1,6 @@
 from .sprites import SpriteSet
 from .colorMaps import ColorMapSet
+from django.shortcuts import render
 
 
 def index(request):

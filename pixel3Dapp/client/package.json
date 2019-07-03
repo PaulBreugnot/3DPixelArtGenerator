@@ -1,0 +1,21 @@
+{
+  "name": "vue_project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "babylonjs": "^4.0.3",
+    "babylonjs-loaders": "^4.0.3",
+    "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^3.7.0",
+    "coffee-loader": "^0.9.0",
+    "coffeescript": "^2.3.2",
+    "vue-cli-plugin-coffee": "^0.1.0",
+    "vue-template-compiler": "^2.5.21"
+  }
+}
