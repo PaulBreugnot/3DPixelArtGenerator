@@ -4,6 +4,10 @@ from rest_framework import status
 from .test_sprite import UploadTestFile
 
 from pixel3Dapp.models import Sprite
+from pixel3Dapp.models import ColorMap
+
+def computeRealMaxHeight(colorMap):
+    return max([colorMapItem.h for colorMapItem in colorMap.colorMapItems.all()])
 
 class EditColorMapTests(TestCase):
 
@@ -46,7 +50,6 @@ class EditColorMapTests(TestCase):
 
 
     def testUpdatePixelSize(self):
-
         with UploadTestFile(self) as testFile:
 
             testFile.process()
@@ -56,4 +59,24 @@ class EditColorMapTests(TestCase):
             updateResponse = self.client.patch("/api/color_maps/" + str(colorMap.id) + "/", {"pixelSize": 20}, content_type="application/json")
 
             self.assertIs(updateResponse.status_code, status.HTTP_200_OK)
+
+
+    def testUpdateMaxHeight(self):
+        with UploadTestFile(self) as testFile:
+
+            testFile.process()
+
+            colorMap = Sprite.objects.get(id = testFile.uploadResponse.data["id"]).colorMap
+
+            self.assertEqual(computeRealMaxHeight(colorMap), ColorMap.defaultMaxHeight)
+
+            updateResponse = self.client.patch("/api/color_maps/" + str(colorMap.id) + "/", {"maxHeight": 20}, content_type="application/json")
+
+            self.assertIs(updateResponse.status_code, status.HTTP_200_OK)
+
+            # Reprocess the sprite with the new max height
+            testFile.process()
+
+            colorMap = Sprite.objects.get(id = testFile.uploadResponse.data["id"]).colorMap
+            self.assertEqual(computeRealMaxHeight(colorMap), 20)
 

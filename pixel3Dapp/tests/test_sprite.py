@@ -243,8 +243,11 @@ class ProcessTest(TestCase):
             self.assertIsNotNone(sprite.colorMap)
 
             # Check default pixel size and max heights
-            self.assertEqual(sprite.colorMap.pixelSize, 10)
-            self.assertEqual(sprite.colorMap.maxHeight, 10)
+            self.assertEqual(sprite.colorMap.pixelSize, ColorMap.defaultPixelSize)
+            self.assertEqual(sprite.colorMap.maxHeight, ColorMap.defaultMaxHeight)
+
+            realMaxHeight = max([colorMapItem.h for colorMapItem in sprite.colorMap.colorMapItems.all()])
+            self.assertEqual(realMaxHeight, ColorMap.defaultMaxHeight)
 
             checkColorMap = unserializeColorMap(pixel3dGenerator.generateColorMap(uploadedFile.spriteFilePath, 10), None)
             checkColorMapSerializer = ColorMapSerializer(checkColorMap)

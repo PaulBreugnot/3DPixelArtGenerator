@@ -94,14 +94,21 @@ class SpriteSet(viewsets.ModelViewSet):
 
             input_file_path = os.path.join(settings.MEDIA_ROOT, sprite.sprite.name)
 
-            # Generate the color map, as an array
-            colorMap = pixel3dGenerator.generateColorMap(input_file_path, 10)
 
+            pixelSize = ColorMap.defaultPixelSize
+            height = ColorMap.defaultMaxHeight
             if ColorMap.objects.filter(sprite_id = sprite.id).exists():
+                pixelSize = sprite.colorMap.pixelSize
+                height = sprite.colorMap.maxHeight
                 sprite.colorMap.delete()
 
+            # Generate the color map, as an array
+            colorMap = pixel3dGenerator.generateColorMap(input_file_path, height)
+
             # Convert the array to a colorMap object
-            unserializeColorMap(colorMap, sprite)
+            colorMap = unserializeColorMap(colorMap, sprite)
+            colorMap.pixelSize = pixelSize
+            colorMap.maxHeight = height
             
             # Sets the colorMap field, and save the sprite
             # sprite.colorMap = colorMap

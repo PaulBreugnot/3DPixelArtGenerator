@@ -3,9 +3,12 @@ from django.db import models
 from .sprite import Sprite
 
 class ColorMap(models.Model):
+    defaultPixelSize = 10
+    defaultMaxHeight = 10
+
     sprite = models.OneToOneField(Sprite, on_delete=models.CASCADE, related_name="colorMap", default=None, null=True)
-    pixelSize = models.FloatField(default = 10)
-    maxHeight = models.FloatField(default = 10)
+    pixelSize = models.FloatField(default = defaultPixelSize)
+    maxHeight = models.FloatField(default = defaultMaxHeight)
 
 class ColorMapItem(models.Model):
     colorMap = models.ForeignKey(ColorMap, on_delete=models.CASCADE, related_name="colorMapItems")
