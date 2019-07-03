@@ -12,6 +12,7 @@
 				<button
 					class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"
 					v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
+					v-bind:disabled="!currentSprite"
 					v-on:click="currentTab = 'editor'">
 						<h3>Editor</h3>
 				</button>
@@ -19,15 +20,17 @@
 			</div>
 		</header>
 
-		<sprites
-			v-if="currentTab == 'sprites'"
-			v-on:edit-sprite="editSprite($event)">
-		</sprites>
-		<editor
-			id="editor"
-			v-if="currentTab == 'editor'"
-			v-bind:sprite="currentSprite">
-		</editor>
+		<keep-alive>
+			<sprites
+				v-if="currentTab == 'sprites'"
+				v-on:edit-sprite="editSprite($event)">
+			</sprites>
+			<editor
+				id="editor"
+				v-if="currentTab == 'editor'"
+				v-bind:sprite="currentSprite">
+			</editor>
+		</keep-alive>
 
 	</div>
 </template>

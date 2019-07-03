@@ -195,9 +195,6 @@
 								buildAndColorPixel(line, column, pixel)
 				this.refreshCamera()
 
-				this.engine.runRenderLoop(() ->
-						self.scene.render()
-				)
 
 			initBuild: () ->
 				canvas = this.$refs[this.canvasName]
@@ -243,10 +240,18 @@
 		mounted: () ->
 			this.initBuild()
 			this.build()
-#			this.removePixels()
 
 		destroyed: () ->
 			this.clear()
+
+		deactivated: () ->
+			this.clear()
+
+		activated: () ->
+			self = this
+			this.engine.runRenderLoop(() ->
+					self.scene.render()
+			)
 
 </script>
 

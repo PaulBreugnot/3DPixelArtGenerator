@@ -7,7 +7,7 @@
 			<i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i>
 			Save
 		</button>
-
+<!--
 		<button class="w3-button w3-bar-item toolbar-button w3-large">
 			<i class="fa fa-download fa-lg" aria-hidden="true"></i>
 			Load Profile
@@ -17,7 +17,7 @@
 			<i class="fa fa-upload fa-lg" aria-hidden="true"></i>
 			Save Profile
 		</button>
-
+-->
 		<button
 			class="w3-button w3-bar-item toolbar-button w3-large"
 			v-on:click="exportSprite"
@@ -25,8 +25,9 @@
 			<i class="fa fa-rocket fa-lg" aria-hidden="true"></i>
 			Download STL	
 		</button>
-
+<!--
 		<methods class="w3-bar-item w3-border-left w3-border-theme toolbar-button"></methods>
+-->
 		<button
 			class="w3-button w3-bar-item w3-border-right w3-border-theme toolbar-button w3-large"
 			v-on:click="processSprite"

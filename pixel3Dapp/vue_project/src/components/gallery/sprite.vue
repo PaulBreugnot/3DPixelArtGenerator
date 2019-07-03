@@ -46,8 +46,10 @@
 		</div>
 		<div class="sprite-view w3-padding-16 w3-center">
 			<!-- <sprite-2d v-bind:sprite="sprite"/> -->
-			<sprite-2d v-if="currentTab=='sprite-2d'" v-bind:sprite="sprite"></sprite-2d>
-			<sprite-3d v-if="(currentTab=='sprite-3d') && sprite.colorMap" v-bind:sprite="sprite"></sprite-3d>
+			<keep-alive>
+				<sprite-2d v-if="currentTab=='sprite-2d'" v-bind:sprite="sprite"></sprite-2d>
+				<sprite-3d v-if="(currentTab=='sprite-3d') && sprite.colorMap" v-bind:sprite="sprite"></sprite-3d>
+			</keep-alive>
 			<process-sprite
 				v-if="(currentTab=='sprite-3d') && !sprite.colorMap"
 				v-bind:sprite="sprite"
