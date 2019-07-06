@@ -1,6 +1,6 @@
 <template>
 	<div v-if="sprite" class="w3-card">
-		<header v-if="!renaming" class="w3-cell-row w3-padding w3-theme-d1">
+		<header v-if="!renaming" class="w3-cell-row w3-padding w3-theme-d1 card-header">
 			<div v-if="displayTools" class="w3-dropdown-hover w3-cell w3-cell-middle w3-theme-d1">
 				<i class="fa fa-bars fa-2x" aria-hidden="true"></i>
 				<div class="w3-dropdown-content w3-bar-block w3-border">
@@ -27,7 +27,7 @@
 			</div>
 		</header>
 
-		<header v-else class="w3-cell-row w3-theme-d1">
+		<header v-else class="w3-cell-row w3-theme-d1 card-header">
 			<div class="w3-container w3-cell w3-cell-middle">
 				<input class="w3-input w3-theme-l1 w3-border-0" type="text" v-model="sprite.name"></input>
 			</div>
@@ -127,7 +127,7 @@
 </script>
 
 <style>
- header {
+ .card-header {
 	 min-height: 60px;
  }
 

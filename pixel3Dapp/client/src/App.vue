@@ -3,32 +3,32 @@
 		<div class="w3-main" id="main-body">
 		<header id="main-header" class="w3-bar w3-bottombar w3-border-theme">
 			<button
-				class="w3-bar-item w3-button w3-xlarge top-button w3-wide w3-text-red"
+				class="w3-bar-item w3-mobile w3-button w3-xlarge top-button w3-wide w3-text-red"
 				v-bind:class="[currentTab == 'home' ? 'w3-theme' : '']"
 				v-on:click="currentTab = 'home'">
 				UNIPIX
 			</button>
 			<button
-				class="w3-bar-item w3-button w3-xlarge top-button"
+				class="w3-bar-item w3-mobile w3-button w3-xlarge top-button"
 				v-bind:class="[currentTab == 'sprites' ? 'w3-theme' : '']"
 				v-on:click="currentTab = 'sprites'">
 					Gallery
 			</button>
 			<button
-				class="w3-bar-item w3-button w3-xlarge top-button"
+				class="w3-bar-item w3-mobile w3-button w3-xlarge top-button"
 				v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
 				v-bind:disabled="!currentSprite"
 				v-on:click="currentTab = 'editor'">
 					Editor
 			</button>
 			<button
-				class="w3-bar-item w3-button w3-xlarge top-button"
+				class="w3-bar-item w3-mobile w3-button w3-xlarge top-button"
 				v-bind:class="[currentTab == 'manual' ? 'w3-theme' : '']"
 				v-on:click="currentTab = 'manual'">
 				Manual
 			</button>
 			<a
-				class="w3-bar-item w3-button w3-right  w3-xlarge top-button w3-hover-black"
+				class="w3-bar-item w3-mobile w3-button w3-right  w3-xlarge top-button w3-hover-black"
 				href="https://github.com/PaulBreugnot/UniPix"
 				target="_blank"
 				>
@@ -36,7 +36,7 @@
 				GitHub
 			</a>
 			<a
-				class="w3-bar-item w3-button w3-right  w3-xlarge top-button w3-text-blue w3-hover-blue"
+				class="w3-bar-item w3-mobile w3-button w3-right  w3-xlarge top-button w3-text-blue w3-hover-blue"
 				href="https://twitter.com/PaulBreugnot"
 				target="_blank"
 				>
@@ -44,7 +44,7 @@
 				Twitter
 			</a>
 			<a
-				class="w3-bar-item w3-button w3-right  w3-xlarge top-button w3-text-deep-purple w3-hover-deep-purple"
+				class="w3-bar-item w3-mobile w3-button w3-right  w3-xlarge top-button w3-text-deep-purple w3-hover-deep-purple"
 				href="https://join.slack.com/t/pixled/shared_invite/enQtNjYwMDczNTg3Mjk2LTJiMjZkMzhiZjgzYmVjNTgxZWViYmU3NjYzOWUzMWU5ZTQ4YmMyZjRiMzRjNjAxMjcxZTkwMTQyMmNkM2RmODM"
 				target="_blank">
 				<i class="fa fa-slack" aria-hidden="true"></i>
@@ -152,7 +152,6 @@ body {
 }
 
 #main-header {
-	height:5%
 }
 
 #main-sidebar {
