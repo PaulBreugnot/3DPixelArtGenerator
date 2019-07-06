@@ -7,7 +7,14 @@
 			v-on:hide-delete="hideDelete"
 			v-on:delete-sprite="deleteSprite">
 		</delete-sprite>
-		<new-sprite v-on:new-sprite="addNewSprite"></new-sprite>
+		<new-sprite v-on:new-sprite="addNewSprite" v-bind:display.sync="displayNewSprite"></new-sprite> 
+		<button
+			class="w3-button w3-xlarge w3-round-large w3-margin-left w3-margin-top w3-blue"
+			v-on:click="displayNewSprite = true"
+			>
+			<i class="fa fa-upload fa-lg" aria-hidden="true"></i>
+			Upload New Sprite
+		</button>
 		<div class="w3-row-padding">
 				<div v-for="sprite in sprites" class="w3-col l4 m6 s12 w3-padding-16">
 					<sprite
@@ -36,6 +43,7 @@
 		data: () ->
 			sprites: []
 			selectedSprite: null
+			displayNewSprite: false
 			showConfirmDelete: false
 
 		methods:

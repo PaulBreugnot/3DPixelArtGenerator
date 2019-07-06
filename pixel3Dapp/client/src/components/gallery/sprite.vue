@@ -19,6 +19,12 @@
 				</div>
 			</div>
 			<div class="w3-container w3-cell w3-cell-middle"><h4>{{ sprite.name }}</h4></div>
+			<div class="w3-cell w3-cell-middle w3-right">
+			<button v-if="displayTools" class="w3-bar-item w3-button w3-large w3-blue w3-round-large" v-on:click="$emit('edit-sprite', sprite)">
+					<i class="fa fa-cubes" aria-hidden="true"></i>
+					Edit Model	
+			</button>
+			</div>
 		</header>
 
 		<header v-else class="w3-cell-row w3-theme-d1">

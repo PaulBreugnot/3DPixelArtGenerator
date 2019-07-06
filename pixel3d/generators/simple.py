@@ -15,7 +15,7 @@ def compute_simple_pixel_heights(image, max_height):
         for j in range(image_size[0]):
             pixel_value = pixel_values[i * image_size[0] + j]
             if pixel_value[3] != 0:
-                pixel_heights[i].append((1 - colors.index(pixel_value) / len(colors))  * max_height)
+                pixel_heights[i].append((1 - colors.index(pixel_value) / len(colors)) * max_height)
             else:
                 pixel_heights[i].append(0)
 
