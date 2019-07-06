@@ -40,31 +40,17 @@
 			"new-sprite": NewSprite
 			"delete-sprite": DeleteSprite
 
+		props:
+			sprites:
+				type: Array
+				required: true
+
 		data: () ->
-			sprites: []
 			selectedSprite: null
 			displayNewSprite: false
 			showConfirmDelete: false
 
 		methods:
-			fetchSprites: () ->
-				url = "http://localhost:8000/api/sprites/"
-				options=
-					headers:
-						"accept": "application/json"
-				component = this
-				fetch(url)
-				.catch((error) ->
-					console.log error)
-				.then((response) ->
-					console.log response
-					response.json()
-					)
-				.then((json) ->
-					console.log json
-					component.sprites = json
-					)
-
 			confirmDelete: (sprite) ->
 				this.selectedSprite = sprite
 				this.showConfirmDelete = true
@@ -86,8 +72,6 @@
 			addNewSprite: (sprite) ->
 				this.sprites.unshift(sprite)
 
-		mounted: () ->
-			this.fetchSprites()
 
 
 </script>
