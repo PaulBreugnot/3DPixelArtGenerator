@@ -1,84 +1,52 @@
 <template>
 	<div id="app">
-			<!--
-		<div
-			class="w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left"
-			id="main-sidebar"
-			v-bind:style="{display : sideBarDisplay}"
-			>
-  			<button
-				class="w3-bar-item w3-button w3-large w3-hide-large"
-				v-on:click="sideBarDisplay = 'none'"
-				>Close &times;</button>
-				<button
-					class="w3-bar-item w3-button w3-xlarge"
-					v-bind:class="[currentTab == 'home' ? 'w3-theme-l1' : '']"
-					v-on:click="currentTab = 'home'">
-						Home
-				</button>
-				<button
-					class="w3-bar-item w3-button w3-xlarge"
-					v-bind:class="[currentTab == 'sprites' ? 'w3-theme-l1' : '']"
-					v-on:click="currentTab = 'sprites'">
-						Gallery
-				</button>
-				<button
-					class="w3-bar-item w3-button w3-xlarge"
-					v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
-					v-bind:disabled="!currentSprite"
-					v-on:click="currentTab = 'editor'">
-						Editor
-				</button>
-		</div> -->
 		<div class="w3-main" id="main-body">
 		<header id="main-header" class="w3-bar w3-bottombar w3-border-theme">
-<!--
-			<div id="main-title" class="w3-bar-item w3-xlarge w3-text-theme w3-rightbar w3-border-theme w3-wide">
+			<button
+				class="w3-bar-item w3-button w3-xlarge top-button w3-wide w3-text-red"
+				v-bind:class="[currentTab == 'home' ? 'w3-theme' : '']"
+				v-on:click="currentTab = 'home'">
 				UNIPIX
-			</div>
--->
-				<button
-					class="w3-bar-item w3-button w3-xlarge top-button w3-wide w3-text-red"
-					v-bind:class="[currentTab == 'home' ? 'w3-theme' : '']"
-					v-on:click="currentTab = 'home'">
-					UNIPIX
-				</button>
-				<button
-					class="w3-bar-item w3-button w3-xlarge top-button"
-					v-bind:class="[currentTab == 'sprites' ? 'w3-theme' : '']"
-					v-on:click="currentTab = 'sprites'">
-						Gallery
-				</button>
-				<button
-					class="w3-bar-item w3-button w3-xlarge top-button"
-					v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
-					v-bind:disabled="!currentSprite"
-					v-on:click="currentTab = 'editor'">
-						Editor
-				</button>
-					<button
-					class="w3-bar-item w3-button w3-xlarge top-button"
-					v-bind:class="[currentTab == 'manual' ? 'w3-theme' : '']"
-					v-on:click="currentTab = 'manual'">
-						Manual
-				</button>
-	<!--			<button class="w3-button w3-theme w3-xlarge w3-hide-large w3-cell" v-on:click="sideBarDisplay='block'">&#9776;</button> -->
+			</button>
+			<button
+				class="w3-bar-item w3-button w3-xlarge top-button"
+				v-bind:class="[currentTab == 'sprites' ? 'w3-theme' : '']"
+				v-on:click="currentTab = 'sprites'">
+					Gallery
+			</button>
+			<button
+				class="w3-bar-item w3-button w3-xlarge top-button"
+				v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
+				v-bind:disabled="!currentSprite"
+				v-on:click="currentTab = 'editor'">
+					Editor
+			</button>
+			<button
+				class="w3-bar-item w3-button w3-xlarge top-button"
+				v-bind:class="[currentTab == 'manual' ? 'w3-theme' : '']"
+				v-on:click="currentTab = 'manual'">
+				Manual
+			</button>
 			<a
 				class="w3-bar-item w3-button w3-right  w3-xlarge top-button w3-hover-black"
-				href="https://github.com/PaulBreugnot/UniPix">
+				href="https://github.com/PaulBreugnot/UniPix"
+				target="_blank"
+				>
 				<i class="fa fa-github fa-lg" aria-hidden="true"></i>
 				GitHub
 			</a>
 			<a
 				class="w3-bar-item w3-button w3-right  w3-xlarge top-button w3-text-blue w3-hover-blue"
 				href="https://twitter.com/PaulBreugnot"
+				target="_blank"
 				>
 				<i class="fa fa-twitter fa-lg" aria-hidden="true"></i>
 				Twitter
 			</a>
 			<a
 				class="w3-bar-item w3-button w3-right  w3-xlarge top-button w3-text-deep-purple w3-hover-deep-purple"
-				href="https://join.slack.com/t/pixled/shared_invite/enQtNjYwMDczNTg3Mjk2LTJiMjZkMzhiZjgzYmVjNTgxZWViYmU3NjYzOWUzMWU5ZTQ4YmMyZjRiMzRjNjAxMjcxZTkwMTQyMmNkM2RmODM">
+				href="https://join.slack.com/t/pixled/shared_invite/enQtNjYwMDczNTg3Mjk2LTJiMjZkMzhiZjgzYmVjNTgxZWViYmU3NjYzOWUzMWU5ZTQ4YmMyZjRiMzRjNjAxMjcxZTkwMTQyMmNkM2RmODM"
+				target="_blank">
 				<i class="fa fa-slack" aria-hidden="true"></i>
 				Slack
 			</a>

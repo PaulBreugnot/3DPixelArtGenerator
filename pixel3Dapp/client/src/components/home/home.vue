@@ -8,8 +8,8 @@
 				from your favourite retro game sprites and pixel arts.
 			</p>
 			<div class="w3-container w3-center">
-					<img src="kirby_2d.png" height="200px" class="w3-margin-right"/>
-					<img src="kirby_3d.png" height="200px" class="w3-margin-left"/>
+					<img :src="`${publicPath}kirby_2d.png`" height="200px" class="w3-margin-right"/>
+					<img :src="`${publicPath}kirby_3d.png`" height="200px" class="w3-margin-left"/>
 			</div>
 			<p>
 				No 3D modelling skills are required to build your models : the algorithm handles a base
@@ -20,19 +20,19 @@
 			<div class="w3-cell-row w3-padding-16 w3-center">
 				<div class="w3-cell w3-mobile">
 					<h3><b>1. Choose a sprite</b></h3>
-					<img src="vile_2d.png" height="300px"/>
+					<img :src="`${publicPath}vile_2d.png`" height="300px"/>
 				</div>
 				<div class="w3-cell w3-mobile">
 					<h3><b>2. Import it and build your model</b></h3>
-					<img src="vile_3d.png" height="300px"/>
+					<img :src="`${publicPath}vile_3d.png`" height="300px"/>
 				</div>
 				<div class="w3-cell w3-mobile">
 					<h3><b>3. Print it!</b></h3>
-					<img src="vile_print.JPG" height="300px"/>
+					<img :src="`${publicPath}vile_print.JPG`" height="300px"/>
 				</div>
 				<div class="w3-cell w3-mobile">
 					<h3><b>4. (Optional) Paint it!</b></h3>
-					<img src="vile_paint.png" height="300px"/>
+					<img :src="`${publicPath}vile_paint.png`" height="300px"/>
 				</div>
 			</div>
 			<div class="w3-container w3-margin-top">
@@ -43,6 +43,15 @@
 	</div>
 
 </template>
+
+<script lang="coffee">
+
+	export default
+
+		data: () ->
+			publicPath: process.env.BASE_URL
+
+</script>
 
 
 <style>
