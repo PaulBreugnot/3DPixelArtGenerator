@@ -99,7 +99,7 @@ body {
 }
 
 #main-body {
-	margin-left: 300px;
+	margin-left: 150px;
 	height: 100%;
 }
 
@@ -108,7 +108,7 @@ body {
 }
 
 #main-sidebar {
-	width:300px; 
+	width:150px; 
 }
 
 #editor {

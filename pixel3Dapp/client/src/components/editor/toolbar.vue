@@ -41,6 +41,7 @@
 
 <script lang="coffee">
 import Methods from "./methods"
+import download from 'downloadjs'
 
 export default
 	components:
@@ -122,9 +123,7 @@ export default
 				)
 			.then((json) ->
 				console.log json
-				link = document.createElement("a")
-				link.href = "#{process.env.VUE_APP_SERVER_ROOT}#{json.model3d}"
-				link.click()
+				download("#{process.env.VUE_APP_SERVER_ROOT}#{json.model3d}", "#{json.name}.stl", "application/octet-stream");
 			)
 
 </script>
