@@ -33,25 +33,11 @@
 		<header id="main-header" class="w3-cell-row w3-theme">
 			<button class="w3-button w3-theme w3-xlarge w3-hide-large w3-cell" v-on:click="sideBarDisplay='block'">&#9776;</button>
 			<h1 id="main_title" class="w3-center w3-theme">3D Pixel Art Generator</h1>
-		<!--	<div class="w3-center w3-row">
-				<button
-					class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"
-					v-bind:class="[currentTab == 'sprites' ? 'w3-theme' : '']"
-					v-on:click="currentTab = 'sprites'">
-						<h3>Gallery</h3>
-				</button>
-				<button
-					class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"
-					v-bind:class="[currentTab == 'editor' ? 'w3-theme' : '']"
-					v-bind:disabled="!currentSprite"
-					v-on:click="currentTab = 'editor'">
-						<h3>Editor</h3>
-				</button>
-				<button class="w3-button w3-bottombar w3-border-theme w3-hover-theme w3-third"><h3>About</h3></button>
-		</div> -->
 		</header>
 
 		<keep-alive>
+			<home
+				v-if="currentTab == 'home'"/>
 			<sprites
 				v-if="currentTab == 'sprites'"
 				v-on:edit-sprite="editSprite($event)">
@@ -69,12 +55,14 @@
 
 <script lang="coffee">
 
+	import Home from "./components/home/home"
 	import Sprites from "./components/gallery/sprites"
 	import Editor from "./components/editor/editor"
 
 	export default
 
 		components:
+			"home": Home
 			"sprites": Sprites
 			"editor": Editor
 
