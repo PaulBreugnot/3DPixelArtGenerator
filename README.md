@@ -4,6 +4,10 @@ UniPix is an OpenSource Web Application, powered by [Django](https://www.djangop
 
 No modeling skill is required to build your unique model : you just need to set up pixel heights by color directly in the editor, to finally export .stl files that you can import in your favourite 3D slicer.
 
+<img src="docs/gallery.png" width="300px"/>
+
+<img src="docs/editor.png" width="300px"/>
+
 # How to contribute ?
 
 UniPix is currently developed and maintained by 1 or 2 people as a hobby, and even if we plan to include [many more cool features]() in the future, it is still at its beginning. The energy that we will invest in the project is highly dependent on the moral support of the community, so, even if you are not a developer, here are a few examples of how you can contribute to the project : 
