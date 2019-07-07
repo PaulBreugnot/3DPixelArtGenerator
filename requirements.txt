@@ -1,0 +1,7 @@
+Pillow
+numpy-stl
+numpy
+django
+djangorestframework
+django-cors-headers
+

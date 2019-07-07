@@ -12,7 +12,7 @@
 					<img :src="`${publicPath}kirby_3d.png`" height="200px" class="w3-margin-left"/>
 			</div>
 			<p>
-				No 3D modelling skills are required to build your models : the algorithm handles a base
+				No 3D modeling skills are required to build your models : the algorithm handles a base
 				model generation for you, that you can edit and customize simply by changing color
 				heights from the editor. You can then export your model as an .stl file, ready to load
 				in your favourite 3D slicer.
