@@ -53,6 +53,7 @@ To launch the application, run `python manage.py runserver` from the installatio
 - [ ] Other 3D model generation algorithms
 - [ ] Customize heights by areas
 - [ ] Sprite collections management
+- [ ] More export formats (.gltf, .step...)
 - [ ] Online hosting
 - [ ] A puzzle generator!
 - [ ] Many more cool stuffs.
