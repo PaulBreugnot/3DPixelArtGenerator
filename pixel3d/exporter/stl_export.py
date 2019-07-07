@@ -52,12 +52,12 @@ def cube(x_pixel, z, pixel_size):
     data = numpy.zeros(12, dtype=mesh.Mesh.dtype)
 
     # Top of the cube
-    data['vectors'][0] = numpy.array([[0, x, z],
+    data['vectors'][0] = numpy.array([[0, 0, z],
                                       [x, 0, z],
-                                      [0, 0, z]])
+                                      [0, x, z]])
     data['vectors'][1] = numpy.array([[x, 0, z],
-                                      [0, x, z],
-                                      [x, x, z]])
+                                      [x, x, z],
+                                      [0, x, z]])
     #bottom
     data['vectors'][6] = numpy.array([[0, x, 0],
                                       [x, 0, 0],
@@ -68,8 +68,8 @@ def cube(x_pixel, z, pixel_size):
 
     # Right face
     data['vectors'][2] = numpy.array([[x, 0, 0],
-                                      [x, 0, z],
-                                      [x, x, 0]])
+                                      [x, x, 0],
+                                      [x, 0, z]])
     data['vectors'][3] = numpy.array([[x, x, z],
                                       [x, 0, z],
                                       [x, x, 0]])
@@ -78,20 +78,20 @@ def cube(x_pixel, z, pixel_size):
                                       [0, 0, z],
                                       [0, x, 0]])
     data['vectors'][9] = numpy.array([[0, x, z],
-                                      [0, 0, z],
-                                      [0, x, 0]])
+                                      [0, x, 0],
+                                      [0, 0, z]])
 
     # Left face
     data['vectors'][4] = numpy.array([[0, 0, 0],
                                       [x, 0, 0],
                                       [x, 0, z]])
     data['vectors'][5] = numpy.array([[0, 0, 0],
-                                      [0, 0, z],
-                                      [x, 0, z]])
+                                      [x, 0, z],
+                                      [0, 0, z]])
 
     data['vectors'][10] = numpy.array([[0, x, 0],
-                                       [x, x, 0],
-                                       [x, x, z]])
+                                       [x, x, z],
+                                       [x, x, 0]])
     data['vectors'][11] = numpy.array([[0, x, 0],
                                        [0, x, z],
                                        [x, x, z]])
