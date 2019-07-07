@@ -123,7 +123,7 @@ export default
 				)
 			.then((json) ->
 				console.log json
-				download("#{process.env.VUE_APP_SERVER_ROOT}#{json.model3d}", "#{json.name}.stl", "application/octet-stream");
+				download("#{process.env.VUE_APP_SERVER_ROOT}#{json.model3d}")
 			)
 
 </script>
