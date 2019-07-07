@@ -4,9 +4,9 @@
 
 No modeling skill is required to build your unique model : you just need to set up pixel heights by color directly in the editor, to finally export .stl files that you can import in your favourite 3D slicer.
 
-<img src="docs/gallery.png" width="350px"/>
+<img src="docs/pictures/gallery/gallery.png" width="350px"/>
 
-<img src="docs/editor.png" width="350px"/>
+<img src="docs/pictures/editor/editor.png" width="350px"/>
 
 # How to contribute ?
 
