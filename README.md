@@ -47,10 +47,13 @@ To launch the application, run `python manage.py runserver` from the installatio
 # Current features
 - [x] Import 2D sprites
 - [x] Basic 3D model generation
-- [x] Customize model by color
+- [x] Customize models by color
+- [x] Export your model to an .stl file
+- [x] Persist your creation in a local database
 - [ ] Other 3D model generation algorithms
 - [ ] Customize heights by areas
 - [ ] Sprite collections management
+- [ ] Online hosting
 - [ ] A puzzle generator!
 - [ ] Many more cool stuffs.
 
