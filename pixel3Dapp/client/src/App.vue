@@ -21,12 +21,13 @@
 				v-on:click="currentTab = 'editor'">
 					Editor
 			</button>
-			<button
+			<a
 				class="w3-bar-item w3-mobile w3-button w3-xlarge top-button"
-				v-bind:class="[currentTab == 'manual' ? 'w3-theme' : '']"
-				v-on:click="currentTab = 'manual'">
+				href="https://github.com/PaulBreugnot/UniPix/wiki"
+				target="_blank"
+				>
 				Manual
-			</button>
+			</a>
 			<a
 				class="w3-bar-item w3-mobile w3-button w3-right  w3-xlarge top-button w3-hover-black"
 				href="https://github.com/PaulBreugnot/UniPix"
