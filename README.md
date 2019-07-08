@@ -4,6 +4,8 @@
 
 No modeling skill is required to build your unique model : you just need to set up pixel heights by color directly in the editor, to finally export .stl files that you can import in your favourite 3D slicer.
 
+Check [the wiki](https://github.com/PaulBreugnot/UniPix/wiki) for a more complete manual.
+
 <img src="docs/pictures/gallery/gallery.png" width="350px"/>
 
 <img src="docs/pictures/editor/editor.png" width="350px"/>
@@ -29,11 +31,12 @@ Notice that the application will upload and write files in the cloned repository
 ## pip
 Make sure `pip` is installed and updated:
 - Linux or Mac OS : `pip install -U pip`
-- On Windows : `python -m pip install -U pip`
+- Windows : `python -m pip install -U pip`
 
 ## Dependencies
 From the installation repository :
-> `pip install requirements.txt`
+- Linux or Mac OS : `pip install -r requirements.txt`
+- Windows : `python -m pip install -r requirements.txt`
 
 ## Create the database
 From the installation repository :
